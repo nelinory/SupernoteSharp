@@ -1,0 +1,87 @@
+﻿```
+signature
+header
+	"MODULE_LABEL"
+	"FILE_TYPE"
+	"APPLY_EQUIPMENT"
+	"FINALOPERATION_PAGE"
+	"FINALOPERATION_LAYER"
+	"ORIGINAL_STYLE"
+	"ORIGINAL_STYLEMD5"
+	"DEVICE_DPI"
+	"SOFT_DPI"
+	"FILE_PARSE_TYPE"
+	"RATTA_ETMD"
+	"APP_VERSION"
+	"FILE_ID"
+	"FILE_RECOGN_TYPE"
+	"FILE_RECOGN_LANGUAGE"
+footer
+	"PAGEXXXX" [..] - max pages 9999
+	"TITLE_XXXX" [..]
+	"KEYWORD_XXXX" [..]
+	"LINKO_XXXX" [..] - outbound links
+	"LINKI_XXXX" [..] - inbound links
+	"STYLE_XXXX" [..]
+	"COVER_1" - COVER_1 means there is cover, COVER_0 means no cover
+	"DIRTY"
+	"FILE_FEATURE"
+	keywords []
+		"KEYWORDPAGE"
+		"KEYWORDSEQNO"
+		"KEYWORDRECT"
+		"KEYWORDRECTORI"
+		"KEYWORDSITE"
+	titles []
+		"TITLESEQNO"
+		"TITLELEVEL"
+		"TITLERECT"
+		"TITLERECTORI"
+		"TITLEBITMAP"
+		"TITLEPROTOCOL"
+		"TITLESTYLE"
+	links []
+		"LINKTYPE"
+		"LINKINOUT"
+		"LINKBITMAP"
+		"LINKSTYLE"
+		"LINKTIMESTAMP"
+		"LINKRECT"
+		"LINKRECTORI"
+		"LINKPROTOCAL"
+		"LINKFILE" - Base64-encoded file path or URL
+		"LINKFILEID"
+		"PAGEID"
+		"OBJPAGE"
+pages
+	"PAGESTYLE"
+	"PAGESTYLEMD5"
+	"LAYERINFO"
+	"LAYERSEQ" - layer order of precedence is "LAYER3,LAYER2,LAYER1,MAINLAYER,BGLAYER"
+	"MAINLAYER"
+	"LAYER1"
+	"LAYER2"
+	"LAYER3"
+	"BGLAYER"
+	"TOTALPATH"
+	"THUMBNAILTYPE"
+	"RECOGNSTATUS"
+	"RECOGNTEXT"
+	"RECOGNFILE"
+	"PAGEID"
+	"RECOGNTYPE"
+	"RECOGNFILESTATUS"
+	"RECOGNLANGUAGE"
+	"FIVESTAR" []
+	layers [] - max 5 layers supported
+		"LAYERTYPE"
+		"LAYERPROTOCOL"
+		"LAYERNAME"
+		"LAYERPATH"
+		"LAYERBITMAP"
+		"LAYERVECTORGRAPH"
+		"LAYERRECOGN"
+```
+
+[] - denotes array of objects  
+[..] - denotes multiple items of the same type as PAGE1, PAGE2, etc.
