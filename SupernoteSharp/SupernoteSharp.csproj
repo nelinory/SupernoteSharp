@@ -1,11 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
 
-  <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
-  </ItemGroup>
+		<!-- Support auto-increment build numbers -->
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Deterministic>false</Deterministic>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+	</ItemGroup>
 
 </Project>
