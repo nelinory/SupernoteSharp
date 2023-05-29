@@ -1,6 +1,5 @@
 # SupernoteSharp
-![GitHub release](https://img.shields.io/github/v/release/nelinory/SupernoteSharp)
-![GitHub downloads](https://img.shields.io/github/downloads/nelinory/SupernoteSharp/total)
+![GitHub release](https://img.shields.io/github/release/nelinory/SupernoteSharp)
 ![GitHub issues](https://img.shields.io/github/issues/nelinory/SupernoteSharp)
 ![Github license](https://img.shields.io/github/license/nelinory/SupernoteSharp)
 
