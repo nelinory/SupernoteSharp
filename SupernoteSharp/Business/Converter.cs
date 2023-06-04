@@ -34,6 +34,18 @@ namespace SupernoteSharp.Business
                     return ConvertNonLayeredPage(page, visibilityOverlay);
             }
 
+            public List<Image> ConvertAll(VisibilityOverlay visibilityOverlay)
+            {
+                List<Image> images = new List<Image>();
+
+                for (int i = 0; i < _notebook.TotalPages; i++)
+                {
+                    images.Add(Convert(i, visibilityOverlay));
+                }
+
+                return images;
+            }
+
             private Image ConvertNonLayeredPage(Page page, VisibilityOverlay visibilityOverlay)
             {
                 // TODO: Need Supernote A5 test note

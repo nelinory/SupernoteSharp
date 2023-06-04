@@ -7,6 +7,7 @@ using SupernoteSharp.Business;
 using SupernoteSharp.Common;
 using SupernoteSharp.Entities;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using static SupernoteSharp.Business.Converter;
 
@@ -32,7 +33,7 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestImageConverter()
+        public void TestImageConvert()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_fileStream, Policy.Strict);
@@ -50,6 +51,26 @@ namespace SupernoteSharpUnitTests
             ImageSharpCompare.ImagesAreEqual(page_2.CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_2.png"))).Should().BeTrue();
             ImageSharpCompare.ImagesAreEqual(page_3.CloneAs<Rgba32>(),
+                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_3.png"))).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TestImageConvertAll()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_fileStream, Policy.Strict);
+
+            ImageConverter converter = new Converter.ImageConverter(notebook, DefaultColorPalette.Grayscale);
+
+            List<Image> images = converter.ConvertAll(VisibilityOverlay.Default);
+
+            ImageSharpCompare.ImagesAreEqual(images[0].CloneAs<Rgba32>(),
+                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_0.png"))).Should().BeTrue();
+            ImageSharpCompare.ImagesAreEqual(images[1].CloneAs<Rgba32>(),
+                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_1.png"))).Should().BeTrue();
+            ImageSharpCompare.ImagesAreEqual(images[2].CloneAs<Rgba32>(),
+                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_2.png"))).Should().BeTrue();
+            ImageSharpCompare.ImagesAreEqual(images[3].CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_3.png"))).Should().BeTrue();
         }
     }
