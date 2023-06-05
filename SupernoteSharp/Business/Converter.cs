@@ -219,6 +219,8 @@ namespace SupernoteSharp.Business
 
         public class PdfConverter
         {
+            private const int ALL_PAGES = -1;
+
             private Notebook _notebook;
             private ColorPalette _palette;
 
@@ -230,43 +232,95 @@ namespace SupernoteSharp.Business
 
             public byte[] Convert(int pageNumber, bool vectorize = false, bool enableLinks = false)
             {
-                List<Image> pageImages = new List<Image>();
+                Dictionary<int, Image> pageImages = new Dictionary<int, Image>();
 
                 if (vectorize == true)
                     throw new NotImplementedException();
                 else
                 {
                     ImageConverter converter = new Converter.ImageConverter(_notebook, DefaultColorPalette.Grayscale);
-                    pageImages.Add(converter.Convert(pageNumber, VisibilityOverlay.Default));
+                    if (pageNumber == ALL_PAGES)
+                    {
+                        List<Image> images = converter.ConvertAll(VisibilityOverlay.Default);
+                        for (int i = 0; i < images.Count; i++)
+                            pageImages.Add(i, images[i]);
+                    }
+                    else
+                        pageImages.Add(pageNumber, converter.Convert(pageNumber, VisibilityOverlay.Default));
                 }
 
                 return CreatePdf(pageImages, enableLinks);
             }
 
-            private byte[] CreatePdf(List<Image> pageImages, bool enableLinks)
+            public byte[] ConvertAll(bool vectorize = false, bool enableLinks = false)
+            {
+                return Convert(ALL_PAGES, vectorize, enableLinks);
+            }
+
+            private byte[] CreatePdf(Dictionary<int, Image> pageImages, bool enableLinks)
             {
                 Document pdfDocument = new Document();
 
-                foreach (Image pageImage in pageImages)
-                {
-                    // VectSharp.Page pdfPage = new VectSharp.Page(pageImage.Width, pageImage.Height); // A4
-                    VectSharp.Page pdfPage = new VectSharp.Page(595, 842); // A4
+                // A4 page size, for a PDF document, each dot is 1/72nd of an inch
+                double pageWidth = 210 * 72 / 25.4;
+                double pageHeight = 297 * 72 / 25.4;
 
-                    pageImage.Mutate(x => x.Resize(595, 842, KnownResamplers.RobidouxSharp));
+                foreach (KeyValuePair<int, Image> kvp in pageImages)
+                {
+                    Image pageImage = kvp.Value;
+                    VectSharp.Page pdfPage = new VectSharp.Page(pageWidth, pageHeight);
+
+                    // set image scale to fit the pdf page
+                    pdfPage.Graphics.Scale(pageWidth / pageImage.Width, pageHeight / pageImage.Height);
 
                     // convert image to byte[]
                     byte[] imageBytes = new byte[pageImage.Width * pageImage.Height * Unsafe.SizeOf<Rgba32>()];
                     pageImage.CloneAs<Rgba32>().CopyPixelDataTo(imageBytes);
 
-                    // add image
+                    // draw the image onto the pdf page
                     pdfPage.Graphics.DrawRasterImage(0, 0, new RasterImage(imageBytes, pageImage.Width, pageImage.Height, PixelFormats.RGBA, false));
 
+                    // add  links if requested
+                    if (enableLinks == true)
+                    {
+                        string pageId = _notebook.Page(kvp.Key).PageId;
+                        if (String.IsNullOrEmpty(pageId) == false)
+                            AddLinks(kvp.Key, pdfPage);
+                    }
+
+                    // add completed page
                     pdfDocument.Pages.Add(pdfPage);
                 }
 
-                pdfDocument.SaveAsPDF("C:\\Temp\\pork.pdf");
+                // TODO: Complete
+                pdfDocument.SaveAsPDF("C:\\Temp\\test.pdf");
 
                 return null;
+            }
+
+            private void AddLinks(int pageNumber, VectSharp.Page pdfPage)
+            {
+                List<Link> links = _notebook.Links;
+                for (int i = 0; i < links.Count; i++)
+                {
+                    Link link = links[i];
+                    if (link.PageNumber != pageNumber)
+                        continue;
+
+                    if (link.InOut == (int)LinkDirection.In)
+                        continue; // ignore incoming links
+
+                    int linkType = link.Type;
+                    bool isInternalLink = (link.FileId == _notebook.FileId);
+
+                    if (linkType == (int)LinkType.Page && isInternalLink == true)
+                    {
+                        string tag = link.PageId;
+
+                        // links are transparent
+                        pdfPage.Graphics.StrokeRectangle(link.Rect.left, link.Rect.top, link.Rect.width, link.Rect.height, Colours.Blue /*Colour.FromRgba(0, 0, 0, 0)*/, tag: $"");
+                    }
+                }
             }
         }
     }

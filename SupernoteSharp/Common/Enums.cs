@@ -8,4 +8,8 @@
     public enum Policy { Strict, Loose }
 
     public enum VisibilityOverlay : byte { Default, Visible, Invisible }
+
+    public enum LinkDirection { Out = 0, In = 1 }
+
+    public enum LinkType { Page = 0, File = 1, Web = 4 }
 }

@@ -41,8 +41,8 @@ footer
 		"TITLEPROTOCOL"
 		"TITLESTYLE"
 	links []
-		"LINKTYPE"
-		"LINKINOUT"
+		"LINKTYPE" - 0 is "Page", 1 is "File", 4 is "Web"
+		"LINKINOUT" - 0 is "Out", 1 is "In"
 		"LINKBITMAP"
 		"LINKSTYLE"
 		"LINKTIMESTAMP"
