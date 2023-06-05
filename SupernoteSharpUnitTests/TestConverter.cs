@@ -73,5 +73,15 @@ namespace SupernoteSharpUnitTests
             ImageSharpCompare.ImagesAreEqual(images[3].CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_3.png"))).Should().BeTrue();
         }
+
+        [TestMethod]
+        public void TestPdfConvert()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_fileStream, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            converter.Convert(0);
+        }
     }
 }

@@ -12,10 +12,8 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
 
 ### Supported file formats
 - [ ] `*.note` file created on Supernote A5
-- [X] `*.note` file created on Supernote A5X (firmware Chauvet 2.8.22)
-- [ ] `*.mark` file created on Supernote A5X (firmware Chauvet 2.8.22)
-- [X] `*.note` file created on Supernote A6X (firmware Chauvet 2.8.22)
-- [ ] `*.mark` file created on Supernote A6X (firmware Chauvet 2.8.22) 
+- [X] `*.note` file created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
+- [ ] `*.mark` file created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
 
 ### Key Features - A5X/A6X models only
 - [X] Export the Supernote file structure (metadata)
@@ -51,3 +49,17 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
 ### Tested on
 - Windows 10 version 22H2 (OS Build 19045.2846)
 - Windows 11 version 22H2 (OS Build 22621.1413)
+ 
+### Used Nuget Packages
+- SupernoteSharp
+    - SixLabors.ImageSharp: https://github.com/SixLabors/ImageSharp
+    - VectSharp: https://github.com/arklumpus/VectSharp
+    - VectSharp.PDF: https://github.com/arklumpus/VectSharp
+- SupernoteSharpUnitTests
+    - SixLabors.ImageSharp: https://github.com/SixLabors/ImageSharp
+    - Codeuctivity.ImageSharpCompare: https://github.com/Codeuctivity/ImageSharp.Compare
+    - coverlet.collector: https://github.com/coverlet-coverage/coverlet
+    - FluentAssertions: https://fluentassertions.com
+    - Microsoft.NET.Test.Sdk: https://github.com/microsoft/vstest
+    - MSTest.TestAdapter: https://github.com/microsoft/testfx
+    - MSTest.TestFramework: https://github.com/microsoft/testfx

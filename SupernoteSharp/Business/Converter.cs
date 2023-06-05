@@ -5,7 +5,11 @@ using SupernoteSharp.Common;
 using SupernoteSharp.Entities;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
+using VectSharp;
+using VectSharp.PDF;
+using Page = SupernoteSharp.Entities.Page;
 
 namespace SupernoteSharp.Business
 {
@@ -210,6 +214,59 @@ namespace SupernoteSharp.Business
                 }));
 
                 return background;
+            }
+        }
+
+        public class PdfConverter
+        {
+            private Notebook _notebook;
+            private ColorPalette _palette;
+
+            public PdfConverter(Notebook notebook, ColorPalette palette)
+            {
+                _notebook = notebook;
+                _palette = palette;
+            }
+
+            public byte[] Convert(int pageNumber, bool vectorize = false, bool enableLinks = false)
+            {
+                List<Image> pageImages = new List<Image>();
+
+                if (vectorize == true)
+                    throw new NotImplementedException();
+                else
+                {
+                    ImageConverter converter = new Converter.ImageConverter(_notebook, DefaultColorPalette.Grayscale);
+                    pageImages.Add(converter.Convert(pageNumber, VisibilityOverlay.Default));
+                }
+
+                return CreatePdf(pageImages, enableLinks);
+            }
+
+            private byte[] CreatePdf(List<Image> pageImages, bool enableLinks)
+            {
+                Document pdfDocument = new Document();
+
+                foreach (Image pageImage in pageImages)
+                {
+                    // VectSharp.Page pdfPage = new VectSharp.Page(pageImage.Width, pageImage.Height); // A4
+                    VectSharp.Page pdfPage = new VectSharp.Page(595, 842); // A4
+
+                    pageImage.Mutate(x => x.Resize(595, 842, KnownResamplers.RobidouxSharp));
+
+                    // convert image to byte[]
+                    byte[] imageBytes = new byte[pageImage.Width * pageImage.Height * Unsafe.SizeOf<Rgba32>()];
+                    pageImage.CloneAs<Rgba32>().CopyPixelDataTo(imageBytes);
+
+                    // add image
+                    pdfPage.Graphics.DrawRasterImage(0, 0, new RasterImage(imageBytes, pageImage.Width, pageImage.Height, PixelFormats.RGBA, false));
+
+                    pdfDocument.Pages.Add(pdfPage);
+                }
+
+                pdfDocument.SaveAsPDF("C:\\Temp\\pork.pdf");
+
+                return null;
             }
         }
     }
