@@ -81,7 +81,17 @@ namespace SupernoteSharpUnitTests
             Notebook notebook = parser.LoadNotebook(_fileStream, Policy.Strict);
 
             PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
-            converter.Convert(0);
+            converter.Convert(1, enableLinks: true);
+        }
+
+        [TestMethod]
+        public void TestPdfConvertAll()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_fileStream, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            converter.ConvertAll();
         }
     }
 }
