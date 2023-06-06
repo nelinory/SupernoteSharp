@@ -16,13 +16,13 @@ namespace SupernoteSharpUnitTests
     [TestClass]
     public class TestConverter
     {
-        private FileStream _fileStream;
+        private static FileStream _fileStream;
+        private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
         [TestInitialize]
         public void Setup()
         {
-            string testNotePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote.note");
-            _fileStream = new FileStream(testNotePath, FileMode.Open, FileAccess.Read);
+            _fileStream = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.note"), FileMode.Open, FileAccess.Read);
         }
 
         [TestCleanup]
@@ -45,13 +45,13 @@ namespace SupernoteSharpUnitTests
             Image page_3 = converter.Convert(3, VisibilityOverlay.Default);
 
             ImageSharpCompare.ImagesAreEqual(page_0.CloneAs<Rgba32>(),
-                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_0.png"))).Should().BeTrue();
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_0.png")))).Should().BeTrue();
             ImageSharpCompare.ImagesAreEqual(page_1.CloneAs<Rgba32>(),
-                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_1.png"))).Should().BeTrue();
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_1.png")))).Should().BeTrue();
             ImageSharpCompare.ImagesAreEqual(page_2.CloneAs<Rgba32>(),
-                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_2.png"))).Should().BeTrue();
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_2.png")))).Should().BeTrue();
             ImageSharpCompare.ImagesAreEqual(page_3.CloneAs<Rgba32>(),
-                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_3.png"))).Should().BeTrue();
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_3.png")))).Should().BeTrue();
         }
 
         [TestMethod]
@@ -65,13 +65,13 @@ namespace SupernoteSharpUnitTests
             List<Image> images = converter.ConvertAll(VisibilityOverlay.Default);
 
             ImageSharpCompare.ImagesAreEqual(images[0].CloneAs<Rgba32>(),
-                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_0.png"))).Should().BeTrue();
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_0.png")))).Should().BeTrue();
             ImageSharpCompare.ImagesAreEqual(images[1].CloneAs<Rgba32>(),
-                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_1.png"))).Should().BeTrue();
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_1.png")))).Should().BeTrue();
             ImageSharpCompare.ImagesAreEqual(images[2].CloneAs<Rgba32>(),
-                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_2.png"))).Should().BeTrue();
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_2.png")))).Should().BeTrue();
             ImageSharpCompare.ImagesAreEqual(images[3].CloneAs<Rgba32>(),
-                Image.Load<Rgba32>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote_3.png"))).Should().BeTrue();
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_3.png")))).Should().BeTrue();
         }
 
         [TestMethod]
@@ -81,8 +81,15 @@ namespace SupernoteSharpUnitTests
             Notebook notebook = parser.LoadNotebook(_fileStream, Policy.Strict);
 
             PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
-            byte[] pdfData = converter.Convert(1);
-            File.WriteAllBytes("C:\\Temp\\Test_One.pdf", pdfData);
+            byte[] page_0 = converter.Convert(0);
+            byte[] page_1 = converter.Convert(1);
+            byte[] page_2 = converter.Convert(2);
+            byte[] page_3 = converter.Convert(3);
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_0.pdf")), page_0).Should().BeTrue();
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_1.pdf")), page_1).Should().BeTrue();
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.pdf")), page_2).Should().BeTrue();
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_3.pdf")), page_3).Should().BeTrue();
         }
 
         [TestMethod]
@@ -92,8 +99,9 @@ namespace SupernoteSharpUnitTests
             Notebook notebook = parser.LoadNotebook(_fileStream, Policy.Strict);
 
             PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
-            byte[] pdfData = converter.ConvertAll();
-            File.WriteAllBytes("C:\\Temp\\Test_All.pdf", pdfData);
+            byte[] allPages = converter.ConvertAll();
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf")), allPages).Should().BeTrue();
         }
     }
 }

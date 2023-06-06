@@ -12,13 +12,13 @@ namespace SupernoteSharpUnitTests
     [TestClass]
     public class TestParser
     {
-        private FileStream _fileStream;
+        private static FileStream _fileStream;
+        private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
         [TestInitialize]
         public void Setup()
         {
-            string testNotePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote.note");
-            _fileStream = new FileStream(testNotePath, FileMode.Open, FileAccess.Read);
+            _fileStream = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.note"), FileMode.Open, FileAccess.Read);
         }
 
         [TestCleanup]
@@ -32,12 +32,12 @@ namespace SupernoteSharpUnitTests
         public void TestParseMetadata()
         {
             Parser parser = new Parser();
-            
+
             // generate metadata from a note test file
             Metadata actual = parser.ParseMetadata(_fileStream, Policy.Strict);
 
             // load metadata from a json test file
-            string expectedContent = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestData\A5X_TestNote.json"));
+            string expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote.json"));
             Metadata expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
             actual.ToJson().Should().BeEquivalentTo(expected.ToJson()); // compare actual document with the sample document
@@ -54,7 +54,7 @@ namespace SupernoteSharpUnitTests
             notebook.Cover.Content.Should().NotBeNull();
             notebook.Titles.Count.Should().Be(2); // test document have 2 titles
             notebook.Keywords.Count.Should().Be(2); // test document have 2 keywords
-            notebook.Links.Count.Should().Be(7); // test document have 7 links
+            notebook.Links.Count.Should().Be(7); // test document have 7 links: 6 internal + 1 external
             notebook.TotalPages.Should().Be(4); // test document have 4 pages
             notebook.Pages.Count.Should().Be(4); // test document have 4 pages
             notebook.Pages[2].LayerOrder.Count.Should().Be(5); // test document page 3 have total of 5 layers
