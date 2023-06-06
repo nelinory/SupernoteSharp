@@ -5,6 +5,7 @@ using SupernoteSharp.Common;
 using SupernoteSharp.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using VectSharp;
@@ -292,14 +293,19 @@ namespace SupernoteSharp.Business
                     pdfDocument.Pages.Add(pdfPage);
                 }
 
-                // TODO: Complete
-                pdfDocument.SaveAsPDF("C:\\Temp\\test.pdf");
-
-                return null;
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    pdfDocument.SaveAsPDF(memoryStream);
+                    return memoryStream.ToArray();
+                }
             }
 
             private void AddLinks(int pageNumber, VectSharp.Page pdfPage)
             {
+                throw new NotImplementedException();
+
+                // TODO: Complete
+
                 List<Link> links = _notebook.Links;
                 for (int i = 0; i < links.Count; i++)
                 {

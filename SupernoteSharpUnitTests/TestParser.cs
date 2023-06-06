@@ -54,7 +54,7 @@ namespace SupernoteSharpUnitTests
             notebook.Cover.Content.Should().NotBeNull();
             notebook.Titles.Count.Should().Be(2); // test document have 2 titles
             notebook.Keywords.Count.Should().Be(2); // test document have 2 keywords
-            notebook.Links.Count.Should().Be(6); // test document have 6 links
+            notebook.Links.Count.Should().Be(7); // test document have 7 links
             notebook.TotalPages.Should().Be(4); // test document have 4 pages
             notebook.Pages.Count.Should().Be(4); // test document have 4 pages
             notebook.Pages[2].LayerOrder.Count.Should().Be(5); // test document page 3 have total of 5 layers
