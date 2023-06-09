@@ -21,7 +21,9 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
         Parser parser = new Parser();
-        Metadata metadata = parser.ParseMetadata(_fileStream, Policy.Strict);
+        Metadata metadata = parser.ParseMetadata(fileStream, Policy.Strict);
+
+        // metadata
         string metadataJson = metadata.ToJson();
     }
 ```
@@ -30,18 +32,45 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
         Parser parser = new Parser();
-        Notebook notebook = parser.LoadNotebook(_fileStream, Policy.Strict);
+        Notebook notebook = parser.LoadNotebook(fileStream, Policy.Strict);
         ImageConverter converter = new Converter.ImageConverter(notebook, DefaultColorPalette.Grayscale);
 
-        // convert a page
+        // convert a page to PNG
         Image page_0 = converter.Convert(0, VisibilityOverlay.Default);
+        // save the result
+        page_0.SaveAsPng(PNG_FILE_LOCATION);
 
-        // convert all pages
+        // convert all pages to PNG
         List<Image> images = converter.ConvertAll(VisibilityOverlay.Default);
+        // save the result
+        ...
+    }
+```
+- [X] Export individual pages/all pages to pdf file format
+```C#
+    using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
+    {
+        Parser parser = new Parser();
+        Notebook notebook = parser.LoadNotebook(fileStream, Policy.Strict);
+        PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+
+        // convert a page to PDF
+        byte[] page_0 = converter.Convert(0);
+        // save the result
+        File.WriteAllBytes(PDF_FILE_LOCATION, page_0);
+
+        // convert all pages to PDF
+        byte[] allPages = converter.ConvertAll();
+        // save the result
+        ...
+
+        // convert all pages to PDF and build all links
+        byte[] allPages = converter.ConvertAll(enableLinks: true);
+        // save the result
+        ...
     }
 ```
 - [ ] Export individual pages/all pages to svg file format
-- [ ] Export individual pages/all pages to pdf file format
 - [ ] Export individual pages/all pages to vector pdf file format
 - [ ] Export all text from realtime recognition note to text file format
 - [ ] Export individual annotation/all annotations for a pdf file format

@@ -55,6 +55,15 @@
     <None Update="TestData\A5X_TestNote_3.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\A5X_TestNote_Links.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote_Links.note">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote_Links.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\A5X_TestNote_Vector.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

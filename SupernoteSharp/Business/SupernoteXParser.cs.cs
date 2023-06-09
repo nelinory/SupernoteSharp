@@ -61,7 +61,8 @@ namespace SupernoteSharp.Business
             {
                 keywords.Add(ParseMetadataBlock(fileStream, keywordAddress));
             }
-            footer[Constants.KEY_KEYWORDS] = keywords;
+            if (keywords.Count > 0)
+                footer[Constants.KEY_KEYWORDS] = keywords;
 
             // parse titles
             List<int> titleAddresses = GetItemAddresses(footer, "TITLE_");
@@ -70,7 +71,8 @@ namespace SupernoteSharp.Business
             {
                 titles.Add(ParseMetadataBlock(fileStream, titleAddress));
             }
-            footer[Constants.KEY_TITLES] = titles;
+            if (titles.Count > 0)
+                footer[Constants.KEY_TITLES] = titles;
 
             // parse links
             List<int> linkAddresses = GetItemAddresses(footer, "LINK");
@@ -79,7 +81,8 @@ namespace SupernoteSharp.Business
             {
                 links.Add(ParseMetadataBlock(fileStream, linkAddress));
             }
-            footer[Constants.KEY_LINKS] = links;
+            if (links.Count > 0)
+                footer[Constants.KEY_LINKS] = links;
 
             return footer;
         }
