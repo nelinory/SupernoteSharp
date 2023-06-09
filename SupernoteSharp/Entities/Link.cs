@@ -11,7 +11,7 @@ namespace SupernoteSharp.Entities
         public int Position { get; private set; }
         public int Type { get; private set; }
         public int InOut { get; private set; }
-        public Tuple<int, int, int, int> Rect { get; private set; }
+        public (int left, int top, int width, int height) Rect { get; private set; }
         public string Timestamp { get; private set; }
         public string FilePath { get; private set; }
         public string FileId { get; private set; }
@@ -32,7 +32,7 @@ namespace SupernoteSharp.Entities
             int top = int.Parse(rectangle[1]);
             int width = int.Parse(rectangle[2]);
             int height = int.Parse(rectangle[3]);
-            Rect = new Tuple<int, int, int, int>(left, top, left + width, top + height);
+            Rect = (left, top, width, height);
 
             Timestamp = (string)metadata["LINKTIMESTAMP"];
             FilePath = (string)metadata["LINKFILE"];

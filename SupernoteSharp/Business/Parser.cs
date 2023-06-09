@@ -63,7 +63,7 @@ namespace SupernoteSharp.Business
             {
                 int titleAddress = Int32.Parse((string)notebook.Titles[i].Metadata["TITLEBITMAP"]);
                 notebook.Titles[i].Content = GetContentAtAddress(fileStream, titleAddress);
-                notebook.Titles[i].PageNumber = titlePageNumbers[i];
+                notebook.Titles[i].PageNumber = titlePageNumbers[i] - 1; // title indexes are not 0 based
             }
 
             // attach link data
@@ -72,7 +72,7 @@ namespace SupernoteSharp.Business
             {
                 int linkAddress = Int32.Parse((string)notebook.Links[i].Metadata["LINKBITMAP"]);
                 notebook.Links[i].Content = GetContentAtAddress(fileStream, linkAddress);
-                notebook.Links[i].PageNumber = linkPageNumbers[i];
+                notebook.Links[i].PageNumber = linkPageNumbers[i] - 1;  // link indexes are not 0 based
             }
 
             // attach page data
