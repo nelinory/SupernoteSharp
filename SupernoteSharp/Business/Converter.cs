@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using VectSharp;
 using VectSharp.PDF;
+using VectSharp.SVG;
 using Page = SupernoteSharp.Entities.Page;
 
 namespace SupernoteSharp.Business
@@ -30,7 +31,7 @@ namespace SupernoteSharp.Business
                 _palette = palette;
             }
 
-            public Image Convert(int pageNumber, VisibilityOverlay visibilityOverlay)
+            public Image Convert(int pageNumber, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 Page page = _notebook.Page(pageNumber);
 
@@ -40,7 +41,7 @@ namespace SupernoteSharp.Business
                     return ConvertNonLayeredPage(page, visibilityOverlay);
             }
 
-            public List<Image> ConvertAll(VisibilityOverlay visibilityOverlay)
+            public List<Image> ConvertAll(Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 List<Image> images = new List<Image>();
 
@@ -52,7 +53,31 @@ namespace SupernoteSharp.Business
                 return images;
             }
 
-            private Image ConvertNonLayeredPage(Page page, VisibilityOverlay visibilityOverlay)
+            public static Dictionary<string, VisibilityOverlay> BuildVisibilityOverlay(VisibilityOverlay background = VisibilityOverlay.Default,
+                                                                                        VisibilityOverlay main = VisibilityOverlay.Default,
+                                                                                        VisibilityOverlay layer1 = VisibilityOverlay.Default,
+                                                                                        VisibilityOverlay layer2 = VisibilityOverlay.Default,
+                                                                                        VisibilityOverlay layer3 = VisibilityOverlay.Default)
+            {
+                return new Dictionary<string, VisibilityOverlay>
+                {
+                    { "BGLAYER", background },
+                    { "MAINLAYER", main },
+                    { "LAYER1", layer1 },
+                    { "LAYER2", layer2 },
+                    { "LAYER3", layer3 }
+                };
+            }
+
+            public static byte[] GetImageBytes(Image image)
+            {
+                byte[] imageBytes = new byte[image.Width * image.Height * Unsafe.SizeOf<Rgb24>()];
+                image.CloneAs<Rgb24>().CopyPixelDataTo(imageBytes);
+
+                return imageBytes;
+            }
+
+            private Image ConvertNonLayeredPage(Page page, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 // TODO: Need Supernote A5 test note
                 byte[] pageContent = page.Content;
@@ -64,7 +89,7 @@ namespace SupernoteSharp.Business
                 return CreateImageFromDecoder(decoder, pageContent);
             }
 
-            private Image ConvertLayeredPage(Page page, VisibilityOverlay visibilityOverlay)
+            private Image ConvertLayeredPage(Page page, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 // TODO: Do we need the workaround ?
                 // page = utils.WorkaroundPageWrapper.from_page(page)
@@ -123,7 +148,7 @@ namespace SupernoteSharp.Business
                 return Image.LoadPixelData<L8>(decodedLayer.imageBytes, width, height);
             }
 
-            private Image FlattenLayers(Page page, Dictionary<string, Image> images, VisibilityOverlay visibilityOverlay)
+            private Image FlattenLayers(Page page, Dictionary<string, Image> images, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 // flatten all layers if any
                 Image<Rgba32> flattenImage = new Image<Rgba32>(Constants.PAGE_WIDTH, Constants.PAGE_HEIGHT, Color.White);
@@ -135,7 +160,8 @@ namespace SupernoteSharp.Business
                 foreach (string layerName in LayerOrder)
                 {
                     bool isVisible = visibility[layerName];
-                    if (visibilityOverlay == VisibilityOverlay.Invisible || (visibilityOverlay == VisibilityOverlay.Default && isVisible == false))
+                    VisibilityOverlay layerOverlay = visibilityOverlay[layerName];
+                    if (layerOverlay == VisibilityOverlay.Invisible || (layerOverlay == VisibilityOverlay.Default && isVisible == false))
                     {
                         continue;
                     }
@@ -244,12 +270,12 @@ namespace SupernoteSharp.Business
                     ImageConverter converter = new Converter.ImageConverter(_notebook, DefaultColorPalette.Grayscale);
                     if (pageNumber == ALL_PAGES)
                     {
-                        List<Image> images = converter.ConvertAll(VisibilityOverlay.Default);
+                        List<Image> images = converter.ConvertAll(ImageConverter.BuildVisibilityOverlay());
                         for (int i = 0; i < images.Count; i++)
                             pageImages.Add(i, images[i]);
                     }
                     else
-                        pageImages.Add(pageNumber, converter.Convert(pageNumber, VisibilityOverlay.Default));
+                        pageImages.Add(pageNumber, converter.Convert(pageNumber, ImageConverter.BuildVisibilityOverlay()));
                 }
 
                 return CreatePdf(pageImages, vectorize, enableLinks);
@@ -277,12 +303,8 @@ namespace SupernoteSharp.Business
                     // set image scale to fit the pdf page
                     pdfPage.Graphics.Scale(pageWidth / pageImage.Width, pageHeight / pageImage.Height);
 
-                    // convert image to byte[]
-                    byte[] imageBytes = new byte[pageImage.Width * pageImage.Height * Unsafe.SizeOf<Rgba32>()];
-                    pageImage.CloneAs<Rgba32>().CopyPixelDataTo(imageBytes);
-
                     // draw the image onto the pdf page
-                    pdfPage.Graphics.DrawRasterImage(0, 0, new RasterImage(imageBytes, pageImage.Width, pageImage.Height, PixelFormats.RGBA, false));
+                    pdfPage.Graphics.DrawRasterImage(0, 0, new RasterImage(ImageConverter.GetImageBytes(pageImage), pageImage.Width, pageImage.Height, PixelFormats.RGB, false));
 
                     // add completed page
                     pdfPages.Add(kvp.Key, pdfPage);
@@ -358,6 +380,130 @@ namespace SupernoteSharp.Business
                 }
 
                 return links;
+            }
+        }
+
+        public class SvgConverter
+        {
+            private ColorPalette _palette;
+            private ImageConverter _imageConverter;
+
+            public SvgConverter(Notebook notebook, ColorPalette palette)
+            {
+                _palette = palette ?? DefaultColorPalette.Grayscale;
+                _imageConverter = new ImageConverter(notebook, DefaultColorPalette.Grayscale);
+            }
+
+            public string Convert(int pageNumber)
+            {
+                //SvgDocument dwg = new SvgDocument()
+                //{
+                //    Profile = SvgProfile.Full,
+                //    Width = fileformat.PAGE_WIDTH,
+                //    Height = fileformat.PAGE_HEIGHT
+                //};
+
+                Dictionary<string, VisibilityOverlay> voOnlyBackground = ImageConverter.BuildVisibilityOverlay(background: VisibilityOverlay.Default,
+                                                                                                                main: VisibilityOverlay.Invisible,
+                                                                                                                layer1: VisibilityOverlay.Invisible,
+                                                                                                                layer2: VisibilityOverlay.Invisible,
+                                                                                                                layer3: VisibilityOverlay.Invisible);
+                Image backgroundImage = _imageConverter.Convert(pageNumber, voOnlyBackground);
+
+                VectSharp.Page page = new VectSharp.Page(backgroundImage.Width, backgroundImage.Height);
+                page.Graphics.DrawRasterImage(0, 0, new RasterImage(ImageConverter.GetImageBytes(backgroundImage), backgroundImage.Width, backgroundImage.Height, PixelFormats.RGB, true));
+
+                Dictionary<string, VisibilityOverlay> voAllExceptBackground = ImageConverter.BuildVisibilityOverlay(background: VisibilityOverlay.Invisible);
+                Image pageImage = _imageConverter.Convert(pageNumber, voAllExceptBackground);
+
+                //VectSharp.Page page1 = VectSharp.SVG.Parser.FromFile();
+
+                page.SaveAsSVG("C:\\Temp\\file.svg");
+
+                //using (MemoryStream buffer = new MemoryStream())
+                //{
+                //    bgImg.Save(buffer, ImageFormat.Png);
+                //    string bgB64Str = Convert.ToBase64String(buffer.ToArray());
+                //    dwg.Children.Add(new SvgImage()
+                //    {
+                //        Href = $"data:image/png;base64,{bgB64Str}",
+                //        Width = fileformat.PAGE_WIDTH,
+                //        Height = fileformat.PAGE_HEIGHT
+                //    });
+                //}
+
+                //VisibilityOverlay voExceptBg = ImageConverter.BuildVisibilityOverlay(background: VisibilityOverlay.Invisible);
+                //Image img = this.imageConverter.Convert(pageNumber, visibilityOverlay: voExceptBg);
+
+                //Func<Image, Color, Bitmap> generateColorMask = (Image i, Color c) =>
+                //{
+                //    Bitmap mask = new Bitmap(i.Width, i.Height, PixelFormat.Format32bppArgb);
+                //    for (int x = 0; x < i.Width; x++)
+                //    {
+                //        for (int y = 0; y < i.Height; y++)
+                //        {
+                //            Color pixelColor = i.GetPixel(x, y);
+                //            mask.SetPixel(x, y, pixelColor == c ? Color.Black : Color.White);
+                //        }
+                //    }
+                //    return mask;
+                //};
+
+                //        List<Color> defaultColorList = new List<Color>()
+                //{
+                //    _palette.Black,
+                //    _palette.DarkGray,
+                //    _palette.Gray,
+                //    _palette.White
+                //};
+                //        List<Color> userColorList = new List<Color>()
+                //{
+                //    this.palette.Black,
+                //    this.palette.DarkGray,
+                //    this.palette.Gray,
+                //    this.palette.White
+                //};
+                //        for (int i = 0; i < defaultColorList.Count; i++)
+                //        {
+                //            Color defaultColor = defaultColorList[i];
+                //            Color userColor = userColorList[i];
+                //            Bitmap mask = generateColorMask(img, defaultColor);
+                //            PotraceWrapper.Bitmap bmp = new PotraceWrapper.Bitmap(mask);
+                //            Path path = bmp.Trace();
+                //            if (path.Count > 0)
+                //            {
+                //                SvgPath svgPath = new SvgPath()
+                //                {
+                //                    Fill = new SvgColourServer(userColor),
+                //                    FillRule = SvgFillRule.NonZero
+                //                };
+                //                foreach (Curve curve in path)
+                //                {
+                //                    PointD start = curve.StartPoint;
+                //                    svgPath.PathData.Add(new SvgMoveToSegment(start));
+                //                    foreach (Segment segment in curve)
+                //                    {
+                //                        PointD end = segment.EndPoint;
+                //                        if (segment.IsCorner)
+                //                        {
+                //                            PointD c = segment.C;
+                //                            svgPath.PathData.Add(new SvgLineSegment(c));
+                //                            svgPath.PathData.Add(new SvgLineSegment(end));
+                //                        }
+                //                        else
+                //                        {
+                //                            PointD c1 = segment.C1;
+                //                            PointD c2 = segment.C2;
+                //                            svgPath.PathData.Add(new SvgCubicCurveSegment(c1, c2, end));
+                //                        }
+                //                    }
+                //                    svgPath.PathData.Add(new SvgClosePathSegment());
+                //                }
+                //                dwg.Children.Add(svgPath);
+                //            }
+                //        }
+                //return dwg.GetXML();
+                return null;
             }
         }
     }

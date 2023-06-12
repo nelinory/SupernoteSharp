@@ -9,6 +9,7 @@ using SupernoteSharp.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using VectSharp;
 using static SupernoteSharp.Business.Converter;
 
 namespace SupernoteSharpUnitTests
@@ -44,11 +45,11 @@ namespace SupernoteSharpUnitTests
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
 
             ImageConverter converter = new Converter.ImageConverter(notebook, DefaultColorPalette.Grayscale);
-            Image page_0 = converter.Convert(0, VisibilityOverlay.Default);
-            Image page_1 = converter.Convert(1, VisibilityOverlay.Default);
-            Image page_2 = converter.Convert(2, VisibilityOverlay.Default);
-            Image page_3 = converter.Convert(3, VisibilityOverlay.Default);
-            
+            Image page_0 = converter.Convert(0, ImageConverter.BuildVisibilityOverlay());
+            Image page_1 = converter.Convert(1, ImageConverter.BuildVisibilityOverlay());
+            Image page_2 = converter.Convert(2, ImageConverter.BuildVisibilityOverlay());
+            Image page_3 = converter.Convert(3, ImageConverter.BuildVisibilityOverlay());
+
             ImageSharpCompare.ImagesAreEqual(page_0.CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_0.png")))).Should().BeTrue();
             ImageSharpCompare.ImagesAreEqual(page_1.CloneAs<Rgba32>(),
@@ -67,7 +68,7 @@ namespace SupernoteSharpUnitTests
 
             ImageConverter converter = new Converter.ImageConverter(notebook, DefaultColorPalette.Grayscale);
 
-            List<Image> images = converter.ConvertAll(VisibilityOverlay.Default);
+            List<Image> images = converter.ConvertAll(ImageConverter.BuildVisibilityOverlay());
 
             ImageSharpCompare.ImagesAreEqual(images[0].CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_0.png")))).Should().BeTrue();
@@ -105,7 +106,7 @@ namespace SupernoteSharpUnitTests
 
             PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
             byte[] allPages = converter.ConvertAll();
-            
+
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf")), allPages).Should().BeTrue();
         }
 
@@ -119,6 +120,16 @@ namespace SupernoteSharpUnitTests
             byte[] allPages = converter.ConvertAll(enableLinks: true);
 
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_Links.pdf")), allPages).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TestSvgConvert()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
+
+            SvgConverter converter = new SvgConverter(notebook, DefaultColorPalette.Grayscale);
+            string test = converter.Convert(0);
         }
     }
 }
