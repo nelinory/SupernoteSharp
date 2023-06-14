@@ -84,6 +84,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
     - SixLabors.ImageSharp: https://github.com/SixLabors/ImageSharp
     - VectSharp: https://github.com/arklumpus/VectSharp
     - VectSharp.PDF: https://github.com/arklumpus/VectSharp
+    - CsPotrace: https://www.drawing3d.de/Downloads.aspx (Vectorization)
 - SupernoteSharpUnitTests
     - SixLabors.ImageSharp: https://github.com/SixLabors/ImageSharp
     - Codeuctivity.ImageSharpCompare: https://github.com/Codeuctivity/ImageSharp.Compare

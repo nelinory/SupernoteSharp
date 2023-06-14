@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using VectSharp;
 using VectSharp.PDF;
-using VectSharp.SVG;
 using Page = SupernoteSharp.Entities.Page;
 
 namespace SupernoteSharp.Business
@@ -396,114 +396,87 @@ namespace SupernoteSharp.Business
 
             public string Convert(int pageNumber)
             {
-                //SvgDocument dwg = new SvgDocument()
-                //{
-                //    Profile = SvgProfile.Full,
-                //    Width = fileformat.PAGE_WIDTH,
-                //    Height = fileformat.PAGE_HEIGHT
-                //};
-
+                // page background
                 Dictionary<string, VisibilityOverlay> voOnlyBackground = ImageConverter.BuildVisibilityOverlay(background: VisibilityOverlay.Default,
                                                                                                                 main: VisibilityOverlay.Invisible,
                                                                                                                 layer1: VisibilityOverlay.Invisible,
                                                                                                                 layer2: VisibilityOverlay.Invisible,
                                                                                                                 layer3: VisibilityOverlay.Invisible);
                 Image backgroundImage = _imageConverter.Convert(pageNumber, voOnlyBackground);
+                string backgroundImageBase64;
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    backgroundImage.SaveAsPng(memoryStream);
+                    backgroundImageBase64 = System.Convert.ToBase64String(memoryStream.ToArray());
+                }
 
-                VectSharp.Page page = new VectSharp.Page(backgroundImage.Width, backgroundImage.Height);
-                page.Graphics.DrawRasterImage(0, 0, new RasterImage(ImageConverter.GetImageBytes(backgroundImage), backgroundImage.Width, backgroundImage.Height, PixelFormats.RGB, true));
-
+                // page pen drawings
                 Dictionary<string, VisibilityOverlay> voAllExceptBackground = ImageConverter.BuildVisibilityOverlay(background: VisibilityOverlay.Invisible);
                 Image pageImage = _imageConverter.Convert(pageNumber, voAllExceptBackground);
 
-                //VectSharp.Page page1 = VectSharp.SVG.Parser.FromFile();
+                // Potrace works only with two colors, black & white or on & off
+                // Supernote uses four colors, so to preserve the colors create a mask image for each color and trace it,
+                // then set fill color for each traced path to the correct color
+                List<int> paletteColorList = new List<int>()
+                {
+                    _palette.Black,
+                    _palette.DarkGray,
+                    _palette.Gray,
+                    _palette.White
+                };
 
-                page.SaveAsSVG("C:\\Temp\\file.svg");
+                StringBuilder pageImagePath = new StringBuilder();
+                for (int c = 0; c < paletteColorList.Count; c++)
+                {
+                    Image<Rgb24> imageMask = GenerateColorMask(pageImage, (byte)paletteColorList[c]);
 
-                //using (MemoryStream buffer = new MemoryStream())
-                //{
-                //    bgImg.Save(buffer, ImageFormat.Png);
-                //    string bgB64Str = Convert.ToBase64String(buffer.ToArray());
-                //    dwg.Children.Add(new SvgImage()
-                //    {
-                //        Href = $"data:image/png;base64,{bgB64Str}",
-                //        Width = fileformat.PAGE_WIDTH,
-                //        Height = fileformat.PAGE_HEIGHT
-                //    });
-                //}
+                    List<List<Curve>> ListOfPathes = new List<List<Curve>>();
+                    Potrace.Clear();
+                    Potrace.Potrace_Trace(imageMask, ListOfPathes);
 
-                //VisibilityOverlay voExceptBg = ImageConverter.BuildVisibilityOverlay(background: VisibilityOverlay.Invisible);
-                //Image img = this.imageConverter.Convert(pageNumber, visibilityOverlay: voExceptBg);
+                    pageImagePath.Append(Potrace.getPathTag(ColorUtilities.WebString(paletteColorList[c], "grayscale")));
+                }
 
-                //Func<Image, Color, Bitmap> generateColorMask = (Image i, Color c) =>
-                //{
-                //    Bitmap mask = new Bitmap(i.Width, i.Height, PixelFormat.Format32bppArgb);
-                //    for (int x = 0; x < i.Width; x++)
-                //    {
-                //        for (int y = 0; y < i.Height; y++)
-                //        {
-                //            Color pixelColor = i.GetPixel(x, y);
-                //            mask.SetPixel(x, y, pixelColor == c ? Color.Black : Color.White);
-                //        }
-                //    }
-                //    return mask;
-                //};
+                // compose the final svg
+                string svgTemplate =
+                    $"<svg id=\"svg\" version=\"1.1\" width=\"{backgroundImage.Width}\" height=\"{backgroundImage.Height}\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
+                    $"<image width=\"{backgroundImage.Width}\" height=\"{backgroundImage.Height}\" xlink:href=\"data:image/png;base64,{backgroundImageBase64}\"/>" +
+                    $"{pageImagePath}" +
+                    $"</svg>";
 
-                //        List<Color> defaultColorList = new List<Color>()
-                //{
-                //    _palette.Black,
-                //    _palette.DarkGray,
-                //    _palette.Gray,
-                //    _palette.White
-                //};
-                //        List<Color> userColorList = new List<Color>()
-                //{
-                //    this.palette.Black,
-                //    this.palette.DarkGray,
-                //    this.palette.Gray,
-                //    this.palette.White
-                //};
-                //        for (int i = 0; i < defaultColorList.Count; i++)
-                //        {
-                //            Color defaultColor = defaultColorList[i];
-                //            Color userColor = userColorList[i];
-                //            Bitmap mask = generateColorMask(img, defaultColor);
-                //            PotraceWrapper.Bitmap bmp = new PotraceWrapper.Bitmap(mask);
-                //            Path path = bmp.Trace();
-                //            if (path.Count > 0)
-                //            {
-                //                SvgPath svgPath = new SvgPath()
-                //                {
-                //                    Fill = new SvgColourServer(userColor),
-                //                    FillRule = SvgFillRule.NonZero
-                //                };
-                //                foreach (Curve curve in path)
-                //                {
-                //                    PointD start = curve.StartPoint;
-                //                    svgPath.PathData.Add(new SvgMoveToSegment(start));
-                //                    foreach (Segment segment in curve)
-                //                    {
-                //                        PointD end = segment.EndPoint;
-                //                        if (segment.IsCorner)
-                //                        {
-                //                            PointD c = segment.C;
-                //                            svgPath.PathData.Add(new SvgLineSegment(c));
-                //                            svgPath.PathData.Add(new SvgLineSegment(end));
-                //                        }
-                //                        else
-                //                        {
-                //                            PointD c1 = segment.C1;
-                //                            PointD c2 = segment.C2;
-                //                            svgPath.PathData.Add(new SvgCubicCurveSegment(c1, c2, end));
-                //                        }
-                //                    }
-                //                    svgPath.PathData.Add(new SvgClosePathSegment());
-                //                }
-                //                dwg.Children.Add(svgPath);
-                //            }
-                //        }
-                //return dwg.GetXML();
-                return null;
+                return svgTemplate;
+            }
+
+            private Image<Rgb24> GenerateColorMask(Image image, byte maskColor)
+            {
+                Image<Rgb24> targetImage = new Image<Rgb24>(image.Width, image.Height);
+
+                using (Image<Rgb24> sourceImage = image.CloneAs<Rgb24>())
+                {
+                    int height = sourceImage.Height;
+
+                    sourceImage.ProcessPixelRows(targetImage, (sourceAccessor, targetAccessor) =>
+                    {
+                        for (int y = 0; y < sourceAccessor.Height; y++)
+                        {
+                            Span<Rgb24> sourceRow = sourceAccessor.GetRowSpan(y);
+                            Span<Rgb24> targetRow = targetAccessor.GetRowSpan(y);
+
+                            for (int x = 0; x < sourceRow.Length; x++)
+                            {
+                                ref Rgb24 pixelSource = ref sourceRow[x];
+                                ref Rgb24 pixelTarget = ref targetRow[x];
+
+                                if (pixelSource.R == maskColor && pixelSource.G == maskColor && pixelSource.B == maskColor)
+                                    pixelTarget.R = pixelTarget.G = pixelTarget.B = (byte)_palette.Black; // replace mask color with black
+                                else
+                                    pixelTarget.R = pixelTarget.G = pixelTarget.B = (byte)_palette.White;
+                            }
+                        }
+                    });
+                }
+
+                return targetImage;
             }
         }
     }
