@@ -28,7 +28,7 @@ namespace SupernoteSharp.Business
             public ImageConverter(Notebook notebook, ColorPalette palette)
             {
                 _notebook = notebook;
-                _palette = palette;
+                _palette = palette ?? DefaultColorPalette.Grayscale;
             }
 
             public Image Convert(int pageNumber, Dictionary<string, VisibilityOverlay> visibilityOverlay)
@@ -255,7 +255,7 @@ namespace SupernoteSharp.Business
             public PdfConverter(Notebook notebook, ColorPalette palette)
             {
                 _notebook = notebook;
-                _palette = palette;
+                _palette = palette ?? DefaultColorPalette.Grayscale;
             }
 
             public byte[] Convert(int pageNumber, bool vectorize = false, bool enableLinks = false)
@@ -385,13 +385,13 @@ namespace SupernoteSharp.Business
 
         public class SvgConverter
         {
-            private ColorPalette _palette;
             private ImageConverter _imageConverter;
+            private ColorPalette _palette;
 
             public SvgConverter(Notebook notebook, ColorPalette palette)
             {
-                _palette = palette ?? DefaultColorPalette.Grayscale;
                 _imageConverter = new ImageConverter(notebook, DefaultColorPalette.Grayscale);
+                _palette = palette ?? DefaultColorPalette.Grayscale;
             }
 
             public string Convert(int pageNumber)
@@ -437,7 +437,7 @@ namespace SupernoteSharp.Business
                     pageImagePath.Append(Potrace.getPathTag(ColorUtilities.WebString(paletteColorList[c], "grayscale")));
                 }
 
-                // compose the final svg
+                // create the final svg document
                 string svgTemplate =
                     $"<svg id=\"svg\" version=\"1.1\" width=\"{backgroundImage.Width}\" height=\"{backgroundImage.Height}\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
                     $"<image width=\"{backgroundImage.Width}\" height=\"{backgroundImage.Height}\" xlink:href=\"data:image/png;base64,{backgroundImageBase64}\"/>" +

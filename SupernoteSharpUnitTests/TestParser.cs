@@ -45,7 +45,7 @@ namespace SupernoteSharpUnitTests
             string expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote.json"));
             Metadata expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
-            actual.ToJson().Should().BeEquivalentTo(expected.ToJson()); // compare actual document with the sample document
+            actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
 
             // generate metadata from a note test file
             actual = parser.ParseMetadata(_A5X_TestNote_Links, Policy.Strict);
@@ -54,7 +54,7 @@ namespace SupernoteSharpUnitTests
             expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_Links.json"));
             expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
-            actual.ToJson().Should().BeEquivalentTo(expected.ToJson()); // compare actual document with the sample document
+            actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
         }
 
         [TestMethod]

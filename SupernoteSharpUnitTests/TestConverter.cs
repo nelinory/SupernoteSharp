@@ -9,7 +9,6 @@ using SupernoteSharp.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using VectSharp;
 using static SupernoteSharp.Business.Converter;
 
 namespace SupernoteSharpUnitTests
@@ -129,7 +128,15 @@ namespace SupernoteSharpUnitTests
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
 
             SvgConverter converter = new SvgConverter(notebook, DefaultColorPalette.Grayscale);
-            string test = converter.Convert(0);
+            string page_0 = converter.Convert(0);
+            string page_1 = converter.Convert(1);
+            string page_2 = converter.Convert(2);
+            string page_3 = converter.Convert(3);
+
+            page_0.Should().BeEquivalentTo(File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_0.svg")));
+            page_1.Should().BeEquivalentTo(File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_1.svg")));
+            page_2.Should().BeEquivalentTo(File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_2.svg")));
+            page_3.Should().BeEquivalentTo(File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_3.svg")));
         }
     }
 }
