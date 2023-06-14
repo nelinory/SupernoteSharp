@@ -70,7 +70,20 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         ...
     }
 ```
-- [ ] Export individual pages/all pages to svg file format
+- [X] Export individual pages to svg file format
+```C#
+    using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
+    {
+        Parser parser = new Parser();
+        Notebook notebook = parser.LoadNotebook(fileStream, Policy.Strict);
+        SvgConverter converter = new Converter.SvgConverter(notebook, DefaultColorPalette.Grayscale);
+
+        // convert a page to SVG
+        string page_0 = converter.Convert(0);
+        // save the result
+        File.WriteAllText(SVG_FILE_LOCATION, page_0);
+    }
+``` 
 - [ ] Export individual pages/all pages to vector pdf file format
 - [ ] Export all text from realtime recognition note to text file format
 - [ ] Export individual annotation/all annotations for a pdf file format
