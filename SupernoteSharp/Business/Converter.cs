@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using VectSharp;
 using VectSharp.PDF;
@@ -27,10 +28,10 @@ namespace SupernoteSharp.Business
             public ImageConverter(Notebook notebook, ColorPalette palette)
             {
                 _notebook = notebook;
-                _palette = palette;
+                _palette = palette ?? DefaultColorPalette.Grayscale;
             }
 
-            public Image Convert(int pageNumber, VisibilityOverlay visibilityOverlay)
+            public Image Convert(int pageNumber, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 Page page = _notebook.Page(pageNumber);
 
@@ -40,7 +41,7 @@ namespace SupernoteSharp.Business
                     return ConvertNonLayeredPage(page, visibilityOverlay);
             }
 
-            public List<Image> ConvertAll(VisibilityOverlay visibilityOverlay)
+            public List<Image> ConvertAll(Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 List<Image> images = new List<Image>();
 
@@ -52,7 +53,31 @@ namespace SupernoteSharp.Business
                 return images;
             }
 
-            private Image ConvertNonLayeredPage(Page page, VisibilityOverlay visibilityOverlay)
+            public static Dictionary<string, VisibilityOverlay> BuildVisibilityOverlay(VisibilityOverlay background = VisibilityOverlay.Default,
+                                                                                        VisibilityOverlay main = VisibilityOverlay.Default,
+                                                                                        VisibilityOverlay layer1 = VisibilityOverlay.Default,
+                                                                                        VisibilityOverlay layer2 = VisibilityOverlay.Default,
+                                                                                        VisibilityOverlay layer3 = VisibilityOverlay.Default)
+            {
+                return new Dictionary<string, VisibilityOverlay>
+                {
+                    { "BGLAYER", background },
+                    { "MAINLAYER", main },
+                    { "LAYER1", layer1 },
+                    { "LAYER2", layer2 },
+                    { "LAYER3", layer3 }
+                };
+            }
+
+            public static byte[] GetImageBytes(Image image)
+            {
+                byte[] imageBytes = new byte[image.Width * image.Height * Unsafe.SizeOf<Rgb24>()];
+                image.CloneAs<Rgb24>().CopyPixelDataTo(imageBytes);
+
+                return imageBytes;
+            }
+
+            private Image ConvertNonLayeredPage(Page page, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 // TODO: Need Supernote A5 test note
                 byte[] pageContent = page.Content;
@@ -64,7 +89,7 @@ namespace SupernoteSharp.Business
                 return CreateImageFromDecoder(decoder, pageContent);
             }
 
-            private Image ConvertLayeredPage(Page page, VisibilityOverlay visibilityOverlay)
+            private Image ConvertLayeredPage(Page page, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 // TODO: Do we need the workaround ?
                 // page = utils.WorkaroundPageWrapper.from_page(page)
@@ -123,7 +148,7 @@ namespace SupernoteSharp.Business
                 return Image.LoadPixelData<L8>(decodedLayer.imageBytes, width, height);
             }
 
-            private Image FlattenLayers(Page page, Dictionary<string, Image> images, VisibilityOverlay visibilityOverlay)
+            private Image FlattenLayers(Page page, Dictionary<string, Image> images, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 // flatten all layers if any
                 Image<Rgba32> flattenImage = new Image<Rgba32>(Constants.PAGE_WIDTH, Constants.PAGE_HEIGHT, Color.White);
@@ -135,7 +160,8 @@ namespace SupernoteSharp.Business
                 foreach (string layerName in LayerOrder)
                 {
                     bool isVisible = visibility[layerName];
-                    if (visibilityOverlay == VisibilityOverlay.Invisible || (visibilityOverlay == VisibilityOverlay.Default && isVisible == false))
+                    VisibilityOverlay layerOverlay = visibilityOverlay[layerName];
+                    if (layerOverlay == VisibilityOverlay.Invisible || (layerOverlay == VisibilityOverlay.Default && isVisible == false))
                     {
                         continue;
                     }
@@ -229,7 +255,7 @@ namespace SupernoteSharp.Business
             public PdfConverter(Notebook notebook, ColorPalette palette)
             {
                 _notebook = notebook;
-                _palette = palette;
+                _palette = palette ?? DefaultColorPalette.Grayscale;
             }
 
             public byte[] Convert(int pageNumber, bool vectorize = false, bool enableLinks = false)
@@ -244,12 +270,12 @@ namespace SupernoteSharp.Business
                     ImageConverter converter = new Converter.ImageConverter(_notebook, DefaultColorPalette.Grayscale);
                     if (pageNumber == ALL_PAGES)
                     {
-                        List<Image> images = converter.ConvertAll(VisibilityOverlay.Default);
+                        List<Image> images = converter.ConvertAll(ImageConverter.BuildVisibilityOverlay());
                         for (int i = 0; i < images.Count; i++)
                             pageImages.Add(i, images[i]);
                     }
                     else
-                        pageImages.Add(pageNumber, converter.Convert(pageNumber, VisibilityOverlay.Default));
+                        pageImages.Add(pageNumber, converter.Convert(pageNumber, ImageConverter.BuildVisibilityOverlay()));
                 }
 
                 return CreatePdf(pageImages, vectorize, enableLinks);
@@ -277,12 +303,8 @@ namespace SupernoteSharp.Business
                     // set image scale to fit the pdf page
                     pdfPage.Graphics.Scale(pageWidth / pageImage.Width, pageHeight / pageImage.Height);
 
-                    // convert image to byte[]
-                    byte[] imageBytes = new byte[pageImage.Width * pageImage.Height * Unsafe.SizeOf<Rgba32>()];
-                    pageImage.CloneAs<Rgba32>().CopyPixelDataTo(imageBytes);
-
                     // draw the image onto the pdf page
-                    pdfPage.Graphics.DrawRasterImage(0, 0, new RasterImage(imageBytes, pageImage.Width, pageImage.Height, PixelFormats.RGBA, false));
+                    pdfPage.Graphics.DrawRasterImage(0, 0, new RasterImage(ImageConverter.GetImageBytes(pageImage), pageImage.Width, pageImage.Height, PixelFormats.RGB, false));
 
                     // add completed page
                     pdfPages.Add(kvp.Key, pdfPage);
@@ -358,6 +380,104 @@ namespace SupernoteSharp.Business
                 }
 
                 return links;
+            }
+        }
+
+        public class SvgConverter
+        {
+            private ImageConverter _imageConverter;
+            private ColorPalette _palette;
+
+            public SvgConverter(Notebook notebook, ColorPalette palette)
+            {
+                _imageConverter = new ImageConverter(notebook, DefaultColorPalette.Grayscale);
+                _palette = palette ?? DefaultColorPalette.Grayscale;
+            }
+
+            public string Convert(int pageNumber)
+            {
+                // page background
+                Dictionary<string, VisibilityOverlay> voOnlyBackground = ImageConverter.BuildVisibilityOverlay(background: VisibilityOverlay.Default,
+                                                                                                                main: VisibilityOverlay.Invisible,
+                                                                                                                layer1: VisibilityOverlay.Invisible,
+                                                                                                                layer2: VisibilityOverlay.Invisible,
+                                                                                                                layer3: VisibilityOverlay.Invisible);
+                Image backgroundImage = _imageConverter.Convert(pageNumber, voOnlyBackground);
+                string backgroundImageBase64;
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    backgroundImage.SaveAsPng(memoryStream);
+                    backgroundImageBase64 = System.Convert.ToBase64String(memoryStream.ToArray());
+                }
+
+                // page pen drawings
+                Dictionary<string, VisibilityOverlay> voAllExceptBackground = ImageConverter.BuildVisibilityOverlay(background: VisibilityOverlay.Invisible);
+                Image pageImage = _imageConverter.Convert(pageNumber, voAllExceptBackground);
+
+                // Potrace works only with two colors, black & white or on & off
+                // Supernote uses four colors, so to preserve the colors create a mask image for each color and trace it,
+                // then set fill color for each traced path to the correct color
+                List<int> paletteColorList = new List<int>()
+                {
+                    _palette.Black,
+                    _palette.DarkGray,
+                    _palette.Gray,
+                    _palette.White
+                };
+
+                StringBuilder pageImagePath = new StringBuilder();
+                for (int c = 0; c < paletteColorList.Count; c++)
+                {
+                    Image<Rgb24> imageMask = GenerateColorMask(pageImage, (byte)paletteColorList[c]);
+
+                    List<List<Curve>> ListOfPathes = new List<List<Curve>>();
+                    Potrace.Clear();
+                    Potrace.Potrace_Trace(imageMask, ListOfPathes);
+
+                    if (ListOfPathes.Count > 0)
+                        pageImagePath.Append(Potrace.getPathTag(ColorUtilities.WebString(paletteColorList[c], "grayscale")));
+                }
+
+                // create the final svg document
+                string svgTemplate =
+                    $"<svg id=\"svg\" version=\"1.1\" width=\"{backgroundImage.Width}\" height=\"{backgroundImage.Height}\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
+                    $"<image width=\"{backgroundImage.Width}\" height=\"{backgroundImage.Height}\" xlink:href=\"data:image/png;base64,{backgroundImageBase64}\"/>" +
+                    $"{pageImagePath}" +
+                    $"</svg>";
+
+                return svgTemplate;
+            }
+
+            private Image<Rgb24> GenerateColorMask(Image image, byte maskColor)
+            {
+                Image<Rgb24> targetImage = new Image<Rgb24>(image.Width, image.Height);
+
+                using (Image<Rgb24> sourceImage = image.CloneAs<Rgb24>())
+                {
+                    int height = sourceImage.Height;
+
+                    sourceImage.ProcessPixelRows(targetImage, (sourceAccessor, targetAccessor) =>
+                    {
+                        for (int y = 0; y < sourceAccessor.Height; y++)
+                        {
+                            Span<Rgb24> sourceRow = sourceAccessor.GetRowSpan(y);
+                            Span<Rgb24> targetRow = targetAccessor.GetRowSpan(y);
+
+                            for (int x = 0; x < sourceRow.Length; x++)
+                            {
+                                ref Rgb24 pixelSource = ref sourceRow[x];
+                                ref Rgb24 pixelTarget = ref targetRow[x];
+
+                                if (pixelSource.R == maskColor && pixelSource.G == maskColor && pixelSource.B == maskColor)
+                                    pixelTarget.R = pixelTarget.G = pixelTarget.B = (byte)_palette.Black; // replace mask color with black
+                                else
+                                    pixelTarget.R = pixelTarget.G = pixelTarget.B = (byte)_palette.White;
+                            }
+                        }
+                    });
+                }
+
+                return targetImage;
             }
         }
     }
