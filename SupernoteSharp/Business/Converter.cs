@@ -343,7 +343,7 @@ namespace SupernoteSharp.Business
                     foreach (Link webLink in webLinks)
                     {
                         string webLinkTag = $"WebLink_{webLink.Metadata["LINKBITMAP"]}";
-                        string webLinkUrl = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(webLink.FilePath));
+                        string webLinkUrl = Encoding.UTF8.GetString(System.Convert.FromBase64String(webLink.FilePath));
 
                         kvp.Value.Graphics.StrokeRectangle(webLink.Rect.left, webLink.Rect.top, webLink.Rect.width, webLink.Rect.height,
                                                                         Colour.FromRgba(0, 0, 0, 0), tag: webLinkTag);
@@ -386,11 +386,13 @@ namespace SupernoteSharp.Business
         public class SvgConverter
         {
             private ImageConverter _imageConverter;
+            private Notebook _notebook;
             private ColorPalette _palette;
 
             public SvgConverter(Notebook notebook, ColorPalette palette)
             {
                 _imageConverter = new ImageConverter(notebook, DefaultColorPalette.Grayscale);
+                _notebook = notebook;
                 _palette = palette ?? DefaultColorPalette.Grayscale;
             }
 
@@ -446,6 +448,18 @@ namespace SupernoteSharp.Business
                     $"</svg>";
 
                 return svgTemplate;
+            }
+
+            public List<string> ConvertAll()
+            {
+                List<string> svgPages = new List<string>();
+
+                for (int i = 0; i < _notebook.TotalPages; i++)
+                {
+                    svgPages.Add(Convert(i));
+                }
+
+                return svgPages;
             }
 
             private Image<Rgb24> GenerateColorMask(Image image, byte maskColor)

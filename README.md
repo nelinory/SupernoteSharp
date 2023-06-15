@@ -41,7 +41,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         page_0.SaveAsPng(PNG_FILE_LOCATION);
 
         // convert all pages to PNG
-        List<Image> images = converter.ConvertAll(VisibilityOverlay.Default);
+        List<Image> allPages = converter.ConvertAll(VisibilityOverlay.Default);
         // save the result
         ...
     }
@@ -59,18 +59,13 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         // save the result
         File.WriteAllBytes(PDF_FILE_LOCATION, page_0);
 
-        // convert all pages to PDF
-        byte[] allPages = converter.ConvertAll();
-        // save the result
-        ...
-
         // convert all pages to PDF and build all links
         byte[] allPages = converter.ConvertAll(enableLinks: true);
         // save the result
         ...
     }
 ```
-- [X] Export individual pages to svg file format
+- [X] Export individual pages/all pages to svg file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -82,6 +77,10 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         string page_0 = converter.Convert(0);
         // save the result
         File.WriteAllText(SVG_FILE_LOCATION, page_0);
+
+        // convert all pages to SVG
+        List<string> allPages = converter.ConvertAll();
+        // save the result
     }
 ``` 
 - [ ] Export individual pages/all pages to vector pdf file format
