@@ -434,7 +434,8 @@ namespace SupernoteSharp.Business
                     Potrace.Clear();
                     Potrace.Potrace_Trace(imageMask, ListOfPathes);
 
-                    pageImagePath.Append(Potrace.getPathTag(ColorUtilities.WebString(paletteColorList[c], "grayscale")));
+                    if (ListOfPathes.Count > 0)
+                        pageImagePath.Append(Potrace.getPathTag(ColorUtilities.WebString(paletteColorList[c], "grayscale")));
                 }
 
                 // create the final svg document
