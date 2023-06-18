@@ -9,6 +9,7 @@ using SupernoteSharp.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using static SupernoteSharp.Business.Converter;
 
 namespace SupernoteSharpUnitTests
@@ -18,6 +19,7 @@ namespace SupernoteSharpUnitTests
     {
         private static FileStream _A5X_TestNote;
         private static FileStream _A5X_TestNote_Links;
+        private static FileStream _A5X_TestNote_Vectorization;
         private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
         [TestInitialize]
@@ -25,6 +27,7 @@ namespace SupernoteSharpUnitTests
         {
             _A5X_TestNote = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Links = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Links.note"), FileMode.Open, FileAccess.Read);
+            _A5X_TestNote_Vectorization = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Vectorization.note"), FileMode.Open, FileAccess.Read);
         }
 
         [TestCleanup]
@@ -35,6 +38,9 @@ namespace SupernoteSharpUnitTests
 
             if (_A5X_TestNote_Links != null)
                 _A5X_TestNote_Links.Close();
+
+            if (_A5X_TestNote_Vectorization != null)
+                _A5X_TestNote_Vectorization.Close();
         }
 
         [TestMethod]
@@ -67,15 +73,15 @@ namespace SupernoteSharpUnitTests
 
             ImageConverter converter = new Converter.ImageConverter(notebook, DefaultColorPalette.Grayscale);
 
-            List<Image> images = converter.ConvertAll(ImageConverter.BuildVisibilityOverlay());
+            List<Image> allPages = converter.ConvertAll(ImageConverter.BuildVisibilityOverlay());
 
-            ImageSharpCompare.ImagesAreEqual(images[0].CloneAs<Rgba32>(),
+            ImageSharpCompare.ImagesAreEqual(allPages[0].CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_0.png")))).Should().BeTrue();
-            ImageSharpCompare.ImagesAreEqual(images[1].CloneAs<Rgba32>(),
+            ImageSharpCompare.ImagesAreEqual(allPages[1].CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_1.png")))).Should().BeTrue();
-            ImageSharpCompare.ImagesAreEqual(images[2].CloneAs<Rgba32>(),
+            ImageSharpCompare.ImagesAreEqual(allPages[2].CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_2.png")))).Should().BeTrue();
-            ImageSharpCompare.ImagesAreEqual(images[3].CloneAs<Rgba32>(),
+            ImageSharpCompare.ImagesAreEqual(allPages[3].CloneAs<Rgba32>(),
                 Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote_3.png")))).Should().BeTrue();
         }
 
@@ -98,7 +104,7 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestPdfConvertAll_WithoutLinks()
+        public void TestPdfConvertAll()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
@@ -122,6 +128,18 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
+        public void TestPdfConvert_Vectorization()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Vectorization, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            byte[] page_0 = converter.Convert(0, vectorize: true);
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_Vectorization.pdf")), page_0).Should().BeTrue();
+        }
+
+        [TestMethod]
         public void TestSvgConvert()
         {
             Parser parser = new Parser();
@@ -133,10 +151,25 @@ namespace SupernoteSharpUnitTests
             string page_2 = converter.Convert(2);
             string page_3 = converter.Convert(3);
 
-            page_0.Should().BeEquivalentTo(File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_0.svg")));
-            page_1.Should().BeEquivalentTo(File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_1.svg")));
-            page_2.Should().BeEquivalentTo(File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_2.svg")));
-            page_3.Should().BeEquivalentTo(File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_3.svg")));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_0.svg")), Encoding.ASCII.GetBytes(page_0));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_1.svg")), Encoding.ASCII.GetBytes(page_1));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.svg")), Encoding.ASCII.GetBytes(page_2));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_3.svg")), Encoding.ASCII.GetBytes(page_3));
+        }
+
+        [TestMethod]
+        public void TestSvgConvertAll()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
+
+            SvgConverter converter = new SvgConverter(notebook, DefaultColorPalette.Grayscale);
+            List<string> allPages = converter.ConvertAll();
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_0.svg")), Encoding.ASCII.GetBytes(allPages[0]));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_1.svg")), Encoding.ASCII.GetBytes(allPages[1]));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.svg")), Encoding.ASCII.GetBytes(allPages[2]));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_3.svg")), Encoding.ASCII.GetBytes(allPages[3]));
         }
     }
 }

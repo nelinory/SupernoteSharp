@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Xml;
 using VectSharp;
 using VectSharp.PDF;
 using Page = SupernoteSharp.Entities.Page;
@@ -77,6 +78,28 @@ namespace SupernoteSharp.Business
                 return imageBytes;
             }
 
+            public static Dictionary<int, VectSharp.Page> ImagesToPages(Dictionary<int, Image> pageImages, double pageWidth, double pageHeight)
+            {
+                Dictionary<int, VectSharp.Page> pages = new Dictionary<int, VectSharp.Page>();
+
+                foreach (KeyValuePair<int, Image> kvp in pageImages)
+                {
+                    Image pageImage = kvp.Value;
+                    VectSharp.Page page = new VectSharp.Page(pageWidth, pageHeight);
+
+                    // set image scale to fit the page
+                    page.Graphics.Scale(pageWidth / pageImage.Width, pageHeight / pageImage.Height);
+
+                    // draw the image onto the page
+                    page.Graphics.DrawRasterImage(0, 0, new RasterImage(ImageConverter.GetImageBytes(pageImage), pageImage.Width, pageImage.Height, PixelFormats.RGB, false));
+
+                    // add completed page
+                    pages.Add(kvp.Key, page);
+                }
+
+                return pages;
+            }
+
             private Image ConvertNonLayeredPage(Page page, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 // TODO: Need Supernote A5 test note
@@ -91,8 +114,6 @@ namespace SupernoteSharp.Business
 
             private Image ConvertLayeredPage(Page page, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
-                // TODO: Do we need the workaround ?
-                // page = utils.WorkaroundPageWrapper.from_page(page)
                 Dictionary<string, Image> images = new Dictionary<string, Image>();
 
                 foreach (Layer layer in page.Layers)
@@ -162,9 +183,7 @@ namespace SupernoteSharp.Business
                     bool isVisible = visibility[layerName];
                     VisibilityOverlay layerOverlay = visibilityOverlay[layerName];
                     if (layerOverlay == VisibilityOverlay.Invisible || (layerOverlay == VisibilityOverlay.Default && isVisible == false))
-                    {
                         continue;
-                    }
                     else
                     {
                         if (isVisible == false)
@@ -260,13 +279,36 @@ namespace SupernoteSharp.Business
 
             public byte[] Convert(int pageNumber, bool vectorize = false, bool enableLinks = false)
             {
-                Dictionary<int, Image> pageImages = new Dictionary<int, Image>();
+                // A4 page size is 11.01" x 15.58"/ 210mm x 297mm
+                // For a PDF document, each dot is 1/72nd of an inch
+                double pageWidth = 210 * 72 / 25.4;     // width in pixels = ~595.27
+                double pageHeight = 297 * 72 / 25.4;    // height in pixels = ~841.88
+
+                Dictionary<int, VectSharp.Page> pdfPages;
 
                 if (vectorize == true)
-                    // TODO: Implement vectorized image
-                    throw new NotImplementedException();
+                {
+                    Dictionary<int, string> pageSvgs = new Dictionary<int, string>();
+
+                    // convert page svgs
+                    SvgConverter converter = new Converter.SvgConverter(_notebook, DefaultColorPalette.Grayscale);
+                    if (pageNumber == ALL_PAGES)
+                    {
+                        List<string> svgs = converter.ConvertAll();
+                        for (int i = 0; i < svgs.Count; i++)
+                            pageSvgs.Add(i, svgs[i]);
+                    }
+                    else
+                        pageSvgs.Add(pageNumber, converter.Convert(pageNumber));
+
+                    // assemble pdf pages
+                    pdfPages = SvgConverter.SvgsToPages(pageSvgs, pageWidth, pageHeight);
+                }
                 else
                 {
+                    Dictionary<int, Image> pageImages = new Dictionary<int, Image>();
+
+                    // convert page images
                     ImageConverter converter = new Converter.ImageConverter(_notebook, DefaultColorPalette.Grayscale);
                     if (pageNumber == ALL_PAGES)
                     {
@@ -276,9 +318,12 @@ namespace SupernoteSharp.Business
                     }
                     else
                         pageImages.Add(pageNumber, converter.Convert(pageNumber, ImageConverter.BuildVisibilityOverlay()));
+
+                    // assemble pdf pages
+                    pdfPages = ImageConverter.ImagesToPages(pageImages, pageWidth, pageHeight);
                 }
 
-                return CreatePdf(pageImages, vectorize, enableLinks);
+                return CreatePdf(pdfPages, enableLinks);
             }
 
             public byte[] ConvertAll(bool vectorize = false, bool enableLinks = false)
@@ -286,30 +331,8 @@ namespace SupernoteSharp.Business
                 return Convert(ALL_PAGES, vectorize, enableLinks);
             }
 
-            private byte[] CreatePdf(Dictionary<int, Image> pageImages, bool vectorize, bool enableLinks)
+            private byte[] CreatePdf(Dictionary<int, VectSharp.Page> pdfPages, bool enableLinks)
             {
-                Dictionary<int, VectSharp.Page> pdfPages = new Dictionary<int, VectSharp.Page>();
-
-                // A4 page size is 11.01" x 15.58"
-                // For a PDF document, each dot is 1/72nd of an inch
-                double pageWidth = 210 * 72 / 25.4;     // width in pixels
-                double pageHeight = 297 * 72 / 25.4;    // height in pixels
-
-                foreach (KeyValuePair<int, Image> kvp in pageImages)
-                {
-                    Image pageImage = kvp.Value;
-                    VectSharp.Page pdfPage = new VectSharp.Page(pageWidth, pageHeight);
-
-                    // set image scale to fit the pdf page
-                    pdfPage.Graphics.Scale(pageWidth / pageImage.Width, pageHeight / pageImage.Height);
-
-                    // draw the image onto the pdf page
-                    pdfPage.Graphics.DrawRasterImage(0, 0, new RasterImage(ImageConverter.GetImageBytes(pageImage), pageImage.Width, pageImage.Height, PixelFormats.RGB, false));
-
-                    // add completed page
-                    pdfPages.Add(kvp.Key, pdfPage);
-                }
-
                 // add links if requested
                 Dictionary<string, string> links = null;
                 if (enableLinks == true)
@@ -343,7 +366,7 @@ namespace SupernoteSharp.Business
                     foreach (Link webLink in webLinks)
                     {
                         string webLinkTag = $"WebLink_{webLink.Metadata["LINKBITMAP"]}";
-                        string webLinkUrl = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(webLink.FilePath));
+                        string webLinkUrl = Encoding.UTF8.GetString(System.Convert.FromBase64String(webLink.FilePath));
 
                         kvp.Value.Graphics.StrokeRectangle(webLink.Rect.left, webLink.Rect.top, webLink.Rect.width, webLink.Rect.height,
                                                                         Colour.FromRgba(0, 0, 0, 0), tag: webLinkTag);
@@ -386,11 +409,13 @@ namespace SupernoteSharp.Business
         public class SvgConverter
         {
             private ImageConverter _imageConverter;
+            private Notebook _notebook;
             private ColorPalette _palette;
 
             public SvgConverter(Notebook notebook, ColorPalette palette)
             {
                 _imageConverter = new ImageConverter(notebook, DefaultColorPalette.Grayscale);
+                _notebook = notebook;
                 _palette = palette ?? DefaultColorPalette.Grayscale;
             }
 
@@ -446,6 +471,60 @@ namespace SupernoteSharp.Business
                     $"</svg>";
 
                 return svgTemplate;
+            }
+
+            public List<string> ConvertAll()
+            {
+                List<string> svgPages = new List<string>();
+
+                for (int i = 0; i < _notebook.TotalPages; i++)
+                {
+                    svgPages.Add(Convert(i));
+                }
+
+                return svgPages;
+            }
+
+            public static Dictionary<int, VectSharp.Page> SvgsToPages(Dictionary<int, string> pageSvgs, double pageWidth, double pageHeight)
+            {
+                Dictionary<int, VectSharp.Page> pages = new Dictionary<int, VectSharp.Page>();
+
+                foreach (KeyValuePair<int, string> kvp in pageSvgs)
+                {
+                    string pageSvg = kvp.Value;
+
+                    // extract background image
+                    XmlDocument xmlDocument = new XmlDocument();
+                    xmlDocument.LoadXml(pageSvg);
+                    XmlNode node = xmlDocument.GetElementsByTagName("image")[0]; // there should be one image only
+                    Image background = Image.Load(System.Convert.FromBase64String(node.Attributes["xlink:href"].InnerText.Substring("data:image/png;base64,".Length)));
+
+                    VectSharp.Page backgroundPage = new VectSharp.Page(background.Width, background.Height);
+
+                    // draw the background onto the page
+                    backgroundPage.Graphics.DrawRasterImage(0, 0, new RasterImage(ImageConverter.GetImageBytes(background), background.Width, background.Height, PixelFormats.RGB, false));
+
+                    // extract svg layer
+                    xmlDocument.DocumentElement.RemoveChild(node); // remove background node from svg document
+                    VectSharp.Page penDrawingsPage = new VectSharp.Page(background.Width, background.Height);
+
+                    // load svg onto the page
+                    penDrawingsPage.Graphics.DrawGraphics(0, 0, VectSharp.SVG.Parser.FromString(xmlDocument.InnerXml).Graphics);
+
+                    VectSharp.Page page = new VectSharp.Page(pageWidth, pageHeight);
+
+                    // set svg scale to fit the page
+                    page.Graphics.Scale(pageWidth / background.Width, pageHeight / background.Height);
+
+                    // merge both pages
+                    page.Graphics.DrawGraphics(0, 0, backgroundPage.Graphics);
+                    page.Graphics.DrawGraphics(0, 0, penDrawingsPage.Graphics);
+
+                    // add completed page
+                    pages.Add(kvp.Key, page);
+                }
+
+                return pages;
             }
 
             private Image<Rgb24> GenerateColorMask(Image image, byte maskColor)

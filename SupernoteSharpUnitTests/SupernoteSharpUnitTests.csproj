@@ -79,7 +79,16 @@
     <None Update="TestData\A5X_TestNote_Links.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\A5X_TestNote_Vector.pdf">
+    <None Update="TestData\A5X_TestNote_Vectorization.note">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote_Vectorization.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote_Vectorization_Native.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote_Vectorization_Native.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
