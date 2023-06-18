@@ -83,7 +83,25 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         // save the result
     }
 ``` 
-- [ ] Export individual pages/all pages to vector pdf file format
+- [X] Export individual pages/all pages to vector pdf file format
+```C#
+    using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
+    {
+        Parser parser = new Parser();
+        Notebook notebook = parser.LoadNotebook(fileStream, Policy.Strict);
+        PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+
+        // convert a page to vector PDF
+        byte[] page_0 = converter.Convert(0, vectorize: true);
+        // save the result
+        File.WriteAllBytes(PDF_FILE_LOCATION, page_0);
+
+        // convert all pages to vector PDF and build all links
+        byte[] allPages = converter.ConvertAll(vectorize: true, enableLinks: true);
+        // save the result
+        ...
+    }
+``` 
 - [ ] Export all text from realtime recognition note to text file format
 - [ ] Export individual annotation/all annotations for a pdf file format
 
@@ -96,6 +114,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
     - SixLabors.ImageSharp: https://github.com/SixLabors/ImageSharp
     - VectSharp: https://github.com/arklumpus/VectSharp
     - VectSharp.PDF: https://github.com/arklumpus/VectSharp
+    - VectSharp.SVG: https://github.com/arklumpus/VectSharp
     - CsPotrace: https://www.drawing3d.de/Downloads.aspx (Vectorization)
 - SupernoteSharpUnitTests
     - SixLabors.ImageSharp: https://github.com/SixLabors/ImageSharp
