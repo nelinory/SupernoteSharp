@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Xml;
 using VectSharp;
 using VectSharp.PDF;
@@ -557,6 +558,36 @@ namespace SupernoteSharp.Business
                 }
 
                 return targetImage;
+            }
+        }
+
+        public class TextConverter
+        {
+            private Notebook _notebook;
+            private ColorPalette _palette;
+
+            public TextConverter(Notebook notebook, ColorPalette palette)
+            {
+                _notebook = notebook;
+                _palette = palette ?? DefaultColorPalette.Grayscale;
+            }
+
+            public string Convert(int pageNumber)
+            {
+                if (_notebook.IsRealtimeRecognition == false)
+                    return String.Empty;
+
+                Page page = _notebook.Page(pageNumber);
+                if (page.RecognStatus != Constants.RECOGNSTATUS_DONE)
+                    throw new ConverterException($"note recognition status = {page.RecognStatus}, expected = {Constants.RECOGNSTATUS_DONE}");
+
+                //IBaseDecoder decoder = Decoder.TextDecoder();
+                byte[] binary = page.RecognText;
+                string text = Encoding.UTF8.GetString(System.Convert.FromBase64String(Encoding.UTF8.GetString(binary)));
+                JsonNode recogn = JsonSerializer.Deserialize<JsonNode>(text);
+                //var elements = recogn.elements;
+                // recogn["elements"].AsArray()[0]["label"]
+                return "test";
             }
         }
     }

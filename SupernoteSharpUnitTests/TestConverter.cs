@@ -19,6 +19,7 @@ namespace SupernoteSharpUnitTests
     {
         private static FileStream _A5X_TestNote;
         private static FileStream _A5X_TestNote_Links;
+        private static FileStream _A5X_TestNote_Realtime;
         private static FileStream _A5X_TestNote_Vectorization;
         private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
@@ -27,6 +28,7 @@ namespace SupernoteSharpUnitTests
         {
             _A5X_TestNote = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Links = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Links.note"), FileMode.Open, FileAccess.Read);
+            _A5X_TestNote_Realtime = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Realtime.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Vectorization = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Vectorization.note"), FileMode.Open, FileAccess.Read);
         }
 
@@ -38,6 +40,9 @@ namespace SupernoteSharpUnitTests
 
             if (_A5X_TestNote_Links != null)
                 _A5X_TestNote_Links.Close();
+
+            if (_A5X_TestNote_Realtime != null)
+                _A5X_TestNote_Realtime.Close();
 
             if (_A5X_TestNote_Vectorization != null)
                 _A5X_TestNote_Vectorization.Close();
@@ -170,6 +175,16 @@ namespace SupernoteSharpUnitTests
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_1.svg")), Encoding.ASCII.GetBytes(allPages[1]));
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.svg")), Encoding.ASCII.GetBytes(allPages[2]));
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_3.svg")), Encoding.ASCII.GetBytes(allPages[3]));
+        }
+
+        [TestMethod]
+        public void TestTextConvert()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Realtime, Policy.Strict);
+
+            TextConverter converter = new TextConverter(notebook, DefaultColorPalette.Grayscale);
+            string page_0 = converter.Convert(0);
         }
     }
 }
