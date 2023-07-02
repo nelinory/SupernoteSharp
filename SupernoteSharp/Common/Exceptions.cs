@@ -2,10 +2,10 @@
 
 namespace SupernoteSharp.Common
 {
-    internal class ParserException : Exception
+    internal class ConverterException : Exception
     {
-        protected internal ParserException() { }
-        protected internal ParserException(string message) : base(message) { }
+        protected internal ConverterException() { }
+        protected internal ConverterException(string message) : base(message) { }
     }
 
     internal class UnsupportedFileFormatException : Exception
@@ -25,16 +25,4 @@ namespace SupernoteSharp.Common
         protected internal UnknownDecodeProtocolException() { }
         protected internal UnknownDecodeProtocolException(string message) : base(message) { }
     }
-
-    //internal class ManipulatorException : Exception
-    //{
-    //    protected internal ManipulatorException() { }
-    //    protected internal ManipulatorException(string message) : base(message) { }
-    //}
-
-    //internal class GeneratedFileValidationException : Exception
-    //{
-    //    protected internal GeneratedFileValidationException() { }
-    //    protected internal GeneratedFileValidationException(string message) : base(message) { }
-    //}
 }

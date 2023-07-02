@@ -291,7 +291,7 @@ namespace SupernoteSharp.Business
                     Dictionary<int, string> pageSvgs = new Dictionary<int, string>();
 
                     // convert page svgs
-                    SvgConverter converter = new Converter.SvgConverter(_notebook, DefaultColorPalette.Grayscale);
+                    SvgConverter converter = new Converter.SvgConverter(_notebook, _palette);
                     if (pageNumber == ALL_PAGES)
                     {
                         List<string> svgs = converter.ConvertAll();
@@ -309,7 +309,7 @@ namespace SupernoteSharp.Business
                     Dictionary<int, Image> pageImages = new Dictionary<int, Image>();
 
                     // convert page images
-                    ImageConverter converter = new Converter.ImageConverter(_notebook, DefaultColorPalette.Grayscale);
+                    ImageConverter converter = new Converter.ImageConverter(_notebook, _palette);
                     if (pageNumber == ALL_PAGES)
                     {
                         List<Image> images = converter.ConvertAll(ImageConverter.BuildVisibilityOverlay());
@@ -408,15 +408,15 @@ namespace SupernoteSharp.Business
 
         public class SvgConverter
         {
-            private ImageConverter _imageConverter;
             private Notebook _notebook;
             private ColorPalette _palette;
+            private ImageConverter _imageConverter;
 
             public SvgConverter(Notebook notebook, ColorPalette palette)
             {
-                _imageConverter = new ImageConverter(notebook, DefaultColorPalette.Grayscale);
                 _notebook = notebook;
                 _palette = palette ?? DefaultColorPalette.Grayscale;
+                _imageConverter = new ImageConverter(notebook, _palette);
             }
 
             public string Convert(int pageNumber)
@@ -557,6 +557,34 @@ namespace SupernoteSharp.Business
                 }
 
                 return targetImage;
+            }
+        }
+
+        public class TextConverter
+        {
+            private Notebook _notebook;
+            private ColorPalette _palette;
+
+            public TextConverter(Notebook notebook, ColorPalette palette)
+            {
+                _notebook = notebook;
+                _palette = palette ?? DefaultColorPalette.Grayscale;
+            }
+
+            public string Convert(int pageNumber)
+            {
+                if (_notebook.IsRealtimeRecognition == false)
+                    return String.Empty;
+
+                Page page = _notebook.Page(pageNumber);
+                if (page.RecognStatus != Constants.RECOGNSTATUS_DONE)
+                    throw new ConverterException($"note recognition status = {page.RecognStatus}, expected = {Constants.RECOGNSTATUS_DONE}");
+
+                byte[] recognBytes = page.RecognText;
+                Decoder.TxtDecoder decoder = new Decoder.TxtDecoder();
+                List<string> recognText = decoder.Decode(recognBytes, _palette);
+
+                return String.Join(" ", recognText);
             }
         }
     }
