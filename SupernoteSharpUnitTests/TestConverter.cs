@@ -185,6 +185,13 @@ namespace SupernoteSharpUnitTests
 
             TextConverter converter = new TextConverter(notebook, DefaultColorPalette.Grayscale);
             string page_0 = converter.Convert(0);
+            string page_1 = converter.Convert(1);
+
+            string expected_0 = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_Realtime_0.txt"));
+            string expected_1 = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_Realtime_1.txt"));
+
+            page_0.Should().BeEquivalentTo(expected_0);
+            page_1.Should().BeEquivalentTo(expected_1);
         }
     }
 }

@@ -102,7 +102,20 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         ...
     }
 ``` 
-- [ ] Export all text from realtime recognition note to text file format
+- [X] Export all text from realtime recognition note to text file format
+```C#
+    using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
+    {
+        Parser parser = new Parser();
+        Notebook notebook = parser.LoadNotebook(fileStream, Policy.Strict);
+        TextConverter converter = new TextConverter(notebook, DefaultColorPalette.Grayscale);
+
+        // export the realtime text from a page
+        string page_0 = converter.Convert(0);
+        // save the result
+        File.WriteAllBytes(TXT_FILE_LOCATION, page_0);
+    }
+``` 
 - [ ] Export individual annotation/all annotations for a pdf file format
 
 ### Tested on

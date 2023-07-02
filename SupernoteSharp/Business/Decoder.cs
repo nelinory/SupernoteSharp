@@ -1,12 +1,15 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SupernoteSharp.Common;
+using SupernoteSharp.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text;
 
 namespace SupernoteSharp.Business
 {
@@ -250,7 +253,7 @@ namespace SupernoteSharp.Business
 
         internal class PngDecoder : IBaseDecoder
         {
-            public (byte[] imageBytes, (int width, int height) size, int bitsPerPixel) Decode(byte[] data, ColorPalette palette = null, bool all_blank = false)
+            public (byte[] imageBytes, (int width, int height) size, int bitsPerPixel) Decode(byte[] data, ColorPalette palette = null, bool allBlank = false)
             {
                 using (Image<L8> pngImage = Image.Load<L8>(new MemoryStream(data)))
                 {
@@ -262,6 +265,22 @@ namespace SupernoteSharp.Business
 
                     return (bitmapPixels, (Constants.PAGE_WIDTH, Constants.PAGE_HEIGHT), pngImage.PixelType.BitsPerPixel);
                 }
+            }
+        }
+
+        internal class TxtDecoder
+        {
+            public List<string> Decode(byte[] data, ColorPalette palette, bool allBlank = false)
+            {
+                List<string> noteText = new List<string>();
+
+                if (data == null || data.Length == 0)
+                    return noteText;
+
+                string recognText = Encoding.UTF8.GetString(Convert.FromBase64String(Encoding.UTF8.GetString(data)));
+                Recogn recogn = JsonSerializer.Deserialize<Recogn>(recognText);
+
+                return recogn.elements.Where(p => p.type == "Text").Select(t => t.label.ToString()).ToList();
             }
         }
     }
