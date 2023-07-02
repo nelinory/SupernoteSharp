@@ -113,7 +113,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         // export the realtime text from a page
         string page_0 = converter.Convert(0);
         // save the result
-        File.WriteAllBytes(TXT_FILE_LOCATION, page_0);
+        File.WriteAllText(TXT_FILE_LOCATION, page_0);
     }
 ``` 
 - [ ] Export individual annotation/all annotations for a pdf file format
