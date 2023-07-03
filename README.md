@@ -1,5 +1,6 @@
 # SupernoteSharp
 ![GitHub release](https://img.shields.io/github/release/nelinory/SupernoteSharp)
+![Nuget](https://img.shields.io/nuget/dt/SupernoteSharp?label=nuget%20downloads)
 ![GitHub issues](https://img.shields.io/github/issues/nelinory/SupernoteSharp)
 ![Github license](https://img.shields.io/github/license/nelinory/SupernoteSharp)
 
