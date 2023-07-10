@@ -12,12 +12,11 @@ SupernoteSharp is an unofficial library for Supernote paper-like tablet by Ratta
 This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
 
 ### Supported file formats
-- [ ] `*.note` file created on Supernote A5
-- [X] `*.note` file created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
-- [ ] `*.mark` file created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
+- `*.note` file created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
+- `*.mark` file created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
 
 ### Key Features - A5X/A6X models only
-- [X] Export the Supernote file structure (metadata)
+- Export the Supernote file structure (metadata)
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -28,7 +27,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         string metadataJson = metadata.ToJson();
     }
 ```
-- [X] Export individual pages/all pages to png file format
+- Export individual pages/all pages to png file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -47,7 +46,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         ...
     }
 ```
-- [X] Export individual pages/all pages to pdf file format
+- Export individual pages/all pages to pdf file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -66,7 +65,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         ...
     }
 ```
-- [X] Export individual pages/all pages to svg file format
+- Export individual pages/all pages to svg file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -84,7 +83,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         // save the result
     }
 ``` 
-- [X] Export individual pages/all pages to vector pdf file format
+- Export individual pages/all pages to vector pdf file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -103,7 +102,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         ...
     }
 ``` 
-- [X] Export all text from realtime recognition note to text file format
+- Export all text from realtime recognition note to text file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {

@@ -211,8 +211,12 @@ namespace SupernoteSharp.Business
                 Dictionary<string, bool> layerVisibility = new Dictionary<string, bool>();
                 string layerInfo = page.LayerInfo;
 
-                if (layerInfo == null)
+                // TODO: Improve to support *.mark
+                if (String.IsNullOrWhiteSpace(layerInfo) == true)
+                {
+                    layerVisibility["MAINLAYER"] = true;
                     return layerVisibility;
+                }
 
                 List<Dictionary<string, object>> infoArray = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(layerInfo);
                 foreach (var layer in infoArray)

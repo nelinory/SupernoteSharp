@@ -13,6 +13,7 @@ namespace SupernoteSharp.Entities
         public List<Title> Titles { get; private set; }
         public List<Link> Links { get; private set; }
         public List<Page> Pages { get; private set; }
+        public string FileType { get; private set; }
         public string FileId { get; private set; }
         public bool IsRealtimeRecognition { get; private set; }
         public int TotalPages { get { return Pages.Count; } }
@@ -59,6 +60,7 @@ namespace SupernoteSharp.Entities
                 Pages.Add(new Page(metadata.Pages[i]));
             }
 
+            FileType = (string)metadata.Header["FILE_TYPE"];
             FileId = (string)metadata.Header["FILE_ID"];
             IsRealtimeRecognition = (string)Metadata.Header["FILE_RECOGN_TYPE"] == "1";
         }
