@@ -13,10 +13,10 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
 
 ### Supported file formats
 - `*.note` file created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
-- `*.mark` file created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
+- `*.mark` pdf annotations created on Supernote A5X/A6X (firmware Chauvet 2.8.22)
 
 ### Key Features - A5X/A6X models only
-- Export the Supernote file structure (metadata)
+- Export `*.note`/`*.mark` file structure (metadata)
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -27,7 +27,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         string metadataJson = metadata.ToJson();
     }
 ```
-- Export individual pages/all pages to png file format
+- Export `*.note`/`*.mark` single/all pages to png file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -46,7 +46,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         ...
     }
 ```
-- Export individual pages/all pages to pdf file format
+- Export `*.note`/`*.mark` single/all pages to pdf file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -60,12 +60,13 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         File.WriteAllBytes(PDF_FILE_LOCATION, page_0);
 
         // convert all pages to PDF and build all links
+        // only *.note files supports links
         byte[] allPages = converter.ConvertAll(enableLinks: true);
         // save the result
         ...
     }
 ```
-- Export individual pages/all pages to svg file format
+- Export `*.note`/`*.mark` single/all pages to svg file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -83,7 +84,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         // save the result
     }
 ``` 
-- Export individual pages/all pages to vector pdf file format
+- Export `*.note`/`*.mark` single/all pages to vector pdf file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -97,12 +98,13 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         File.WriteAllBytes(PDF_FILE_LOCATION, page_0);
 
         // convert all pages to vector PDF and build all links
+        // only *.note files supports links
         byte[] allPages = converter.ConvertAll(vectorize: true, enableLinks: true);
         // save the result
         ...
     }
 ``` 
-- Export all text from realtime recognition note to text file format
+- Export all text from realtime recognition `*.note` to text file format
 ```C#
     using (FileStream fileStream = new FileStream(NOTE_FILE_PATH, FileMode.Open, FileAccess.Read))
     {
@@ -115,8 +117,7 @@ This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
         // save the result
         File.WriteAllText(TXT_FILE_LOCATION, page_0);
     }
-``` 
-- [ ] Export individual annotation/all annotations for a pdf file format
+```
 
 ### Tested on
 - Windows 10 version 22H2 (OS Build 19045.2846)

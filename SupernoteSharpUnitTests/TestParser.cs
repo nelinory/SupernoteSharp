@@ -39,7 +39,7 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestParseMetadata()
+        public void TestParseMetadata_Note()
         {
             Parser parser = new Parser();
 
@@ -56,11 +56,17 @@ namespace SupernoteSharpUnitTests
             expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
             actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
+        }
+
+        [TestMethod]
+        public void TestParseMetadata_Mark()
+        {
+            Parser parser = new Parser();
 
             // generate metadata from a mark test file
-            actual = parser.ParseMetadata(_A5X_TestNote_Pdf_Mark, Policy.Strict);
-            expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark.json"));
-            expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
+            Metadata actual = parser.ParseMetadata(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+            string expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark.json"));
+            Metadata expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
             actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
         }

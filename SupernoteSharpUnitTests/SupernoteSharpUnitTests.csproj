@@ -37,6 +37,30 @@
     <None Update="TestData\A5X_TestNote.pdf.mark">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\A5X_TestNote.pdf.mark.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote.pdf.mark_0.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote.pdf.mark_0.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote.pdf.mark_0.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote.pdf.mark_1.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote.pdf.mark_1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote.pdf.mark_1.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote.pdf.mark_Vectorization.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\A5X_TestNote_0.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
