@@ -13,7 +13,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 		<PackageTags>supernote convert multiplatform export ratta</PackageTags>
-		<Version>0.5.8577</Version>
+		<Version>0.5.8583</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

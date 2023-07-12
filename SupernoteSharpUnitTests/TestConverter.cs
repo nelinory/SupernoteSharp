@@ -21,6 +21,7 @@ namespace SupernoteSharpUnitTests
         private static FileStream _A5X_TestNote_Links;
         private static FileStream _A5X_TestNote_Realtime;
         private static FileStream _A5X_TestNote_Vectorization;
+        private static FileStream _A5X_TestNote_Pdf_Mark;
         private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
         [TestInitialize]
@@ -30,6 +31,7 @@ namespace SupernoteSharpUnitTests
             _A5X_TestNote_Links = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Links.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Realtime = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Realtime.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Vectorization = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Vectorization.note"), FileMode.Open, FileAccess.Read);
+            _A5X_TestNote_Pdf_Mark = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark"), FileMode.Open, FileAccess.Read);
         }
 
         [TestCleanup]
@@ -46,10 +48,13 @@ namespace SupernoteSharpUnitTests
 
             if (_A5X_TestNote_Vectorization != null)
                 _A5X_TestNote_Vectorization.Close();
+
+            if (_A5X_TestNote_Pdf_Mark != null)
+                _A5X_TestNote_Pdf_Mark.Close();
         }
 
         [TestMethod]
-        public void TestImageConvert()
+        public void TestImageConvert_Note()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
@@ -71,7 +76,23 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestImageConvertAll()
+        public void TestImageConvert_Mark()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+
+            ImageConverter converter = new Converter.ImageConverter(notebook, DefaultColorPalette.Grayscale);
+            Image page_0 = converter.Convert(0, ImageConverter.BuildVisibilityOverlay());
+            Image page_1 = converter.Convert(1, ImageConverter.BuildVisibilityOverlay());
+
+            ImageSharpCompare.ImagesAreEqual(page_0.CloneAs<Rgba32>(),
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_0.png")))).Should().BeTrue();
+            ImageSharpCompare.ImagesAreEqual(page_1.CloneAs<Rgba32>(),
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_1.png")))).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TestImageConvertAll_Note()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
@@ -91,7 +112,23 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestPdfConvert()
+        public void TestImageConvertAll_Mark()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+
+            ImageConverter converter = new Converter.ImageConverter(notebook, DefaultColorPalette.Grayscale);
+
+            List<Image> allPages = converter.ConvertAll(ImageConverter.BuildVisibilityOverlay());
+
+            ImageSharpCompare.ImagesAreEqual(allPages[0].CloneAs<Rgba32>(),
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_0.png")))).Should().BeTrue();
+            ImageSharpCompare.ImagesAreEqual(allPages[1].CloneAs<Rgba32>(),
+                Image.Load<Rgba32>(Path.Combine(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_1.png")))).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TestPdfConvert_Note()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
@@ -109,7 +146,21 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestPdfConvertAll()
+        public void TestPdfConvert_Mark()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            byte[] page_0 = converter.Convert(0);
+            byte[] page_1 = converter.Convert(1);
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_0.pdf")), page_0).Should().BeTrue();
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_1.pdf")), page_1).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TestPdfConvertAll_Note()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
@@ -121,19 +172,31 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestPdfConvertAll_WithLinks()
+        public void TestPdfConvertAll_Mark()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            byte[] allPages = converter.ConvertAll();
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark.pdf")), allPages).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TestPdfConvertAll_Note_WithLinks()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Links, Policy.Strict);
 
             PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
             byte[] allPages = converter.ConvertAll(enableLinks: true);
-
+            
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_Links.pdf")), allPages).Should().BeTrue();
         }
 
         [TestMethod]
-        public void TestPdfConvert_Vectorization()
+        public void TestPdfConvert_Note_Vectorization()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Vectorization, Policy.Strict);
@@ -145,7 +208,19 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestSvgConvert()
+        public void TestPdfConvertAll_Mark_Vectorization()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            byte[] allPages = converter.ConvertAll(vectorize: true);
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_Vectorization.pdf")), allPages).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TestSvgConvert_Note()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
@@ -163,7 +238,21 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestSvgConvertAll()
+        public void TestSvgConvert_Mark()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+
+            SvgConverter converter = new SvgConverter(notebook, DefaultColorPalette.Grayscale);
+            string page_0 = converter.Convert(0);
+            string page_1 = converter.Convert(1);
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_0.svg")), Encoding.ASCII.GetBytes(page_0));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_1.svg")), Encoding.ASCII.GetBytes(page_1));
+        }
+
+        [TestMethod]
+        public void TestSvgConvertAll_Note()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote, Policy.Strict);
@@ -175,6 +264,19 @@ namespace SupernoteSharpUnitTests
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_1.svg")), Encoding.ASCII.GetBytes(allPages[1]));
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.svg")), Encoding.ASCII.GetBytes(allPages[2]));
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_3.svg")), Encoding.ASCII.GetBytes(allPages[3]));
+        }
+
+        [TestMethod]
+        public void TestSvgConvertAll_Mark()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+
+            SvgConverter converter = new SvgConverter(notebook, DefaultColorPalette.Grayscale);
+            List<string> allPages = converter.ConvertAll();
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_0.svg")), Encoding.ASCII.GetBytes(allPages[0]));
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_1.svg")), Encoding.ASCII.GetBytes(allPages[1]));
         }
 
         [TestMethod]

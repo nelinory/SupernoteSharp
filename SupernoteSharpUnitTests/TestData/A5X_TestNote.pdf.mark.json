@@ -1,0 +1,88 @@
+{
+    "__signature__": "markSN_FILE_VER_20220013",
+    "__header__": {
+        "MODULE_LABEL": "SNFILE_FEATURE",
+        "FILE_TYPE": "MARK",
+        "APPLY_EQUIPMENT": "A5X",
+        "FINALOPERATION_PAGE": "2",
+        "FINALOPERATION_LAYER": "1",
+        "ORIGINAL_STYLE": "none",
+        "ORIGINAL_STYLEMD5": "0",
+        "DEVICE_DPI": "0",
+        "SOFT_DPI": "0",
+        "FILE_PARSE_TYPE": "0",
+        "RATTA_ETMD": "0",
+        "APP_VERSION": "2",
+        "FILE_ID": "F20230615115246511903rxKCoF4YD7zG",
+        "FILE_RECOGN_TYPE": "0",
+        "FILE_RECOGN_LANGUAGE": "none"
+    },
+    "__footer__": {
+        "DIRTY": "0",
+        "FILE_FEATURE": "24",
+        "COVER_0": "0",
+        "PAGE1": "83523",
+        "PAGE2": "169585"
+    },
+    "__pages__": [{
+            "PAGESTYLE": "none",
+            "PAGESTYLEMD5": "0",
+            "LAYERINFO": "none",
+            "LAYERSEQ": "MAINLAYER",
+            "MAINLAYER": "9505",
+            "LAYER1": "0",
+            "LAYER2": "0",
+            "LAYER3": "0",
+            "BGLAYER": "0",
+            "TOTALPATH": "9636",
+            "THUMBNAILTYPE": "0",
+            "RECOGNSTATUS": "0",
+            "RECOGNTEXT": "0",
+            "RECOGNFILE": "0",
+            "PAGEID": "P202307081036531140984wMny1d2xQRA",
+            "RECOGNTYPE": "0",
+            "RECOGNFILESTATUS": "0",
+            "RECOGNLANGUAGE": "none",
+            "FIVESTAR": "2894,10793,3496,10605,3115,11109,3115,10476,3496,10983,1",
+            "__layers__": [{
+                    "LAYERTYPE": "MARK",
+                    "LAYERPROTOCOL": "RATTA_RLE",
+                    "LAYERNAME": "MAINLAYER",
+                    "LAYERPATH": "0",
+                    "LAYERBITMAP": "347",
+                    "LAYERVECTORGRAPH": "0",
+                    "LAYERRECOGN": "0"
+                }, {}, {}, {}, {}
+            ]
+        }, {
+            "PAGESTYLE": "none",
+            "PAGESTYLEMD5": "0",
+            "LAYERINFO": "none",
+            "LAYERSEQ": "MAINLAYER",
+            "MAINLAYER": "91015",
+            "LAYER1": "0",
+            "LAYER2": "0",
+            "LAYER3": "0",
+            "BGLAYER": "0",
+            "TOTALPATH": "91148",
+            "THUMBNAILTYPE": "0",
+            "RECOGNSTATUS": "0",
+            "RECOGNTEXT": "0",
+            "RECOGNFILE": "0",
+            "PAGEID": "P20230708103757063386D5cnwiFfPSzP",
+            "RECOGNTYPE": "0",
+            "RECOGNFILESTATUS": "0",
+            "RECOGNLANGUAGE": "none",
+            "__layers__": [{
+                    "LAYERTYPE": "MARK",
+                    "LAYERPROTOCOL": "RATTA_RLE",
+                    "LAYERNAME": "MAINLAYER",
+                    "LAYERPATH": "0",
+                    "LAYERBITMAP": "83893",
+                    "LAYERVECTORGRAPH": "0",
+                    "LAYERRECOGN": "0"
+                }, {}, {}, {}, {}
+            ]
+        }
+    ]
+}

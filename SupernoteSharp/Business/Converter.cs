@@ -211,8 +211,12 @@ namespace SupernoteSharp.Business
                 Dictionary<string, bool> layerVisibility = new Dictionary<string, bool>();
                 string layerInfo = page.LayerInfo;
 
-                if (layerInfo == null)
+                // Default when no layer information is present - MAINLAYER always exists
+                if (String.IsNullOrWhiteSpace(layerInfo) == true)
+                {
+                    layerVisibility["MAINLAYER"] = true;
                     return layerVisibility;
+                }
 
                 List<Dictionary<string, object>> infoArray = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(layerInfo);
                 foreach (var layer in infoArray)
@@ -230,7 +234,7 @@ namespace SupernoteSharp.Business
                         layerVisibility["LAYER" + layerId] = isVisible;
                 }
 
-                // some old files don't include MAINLAYER info, so we set MAINLAYER visible
+                // some Supernote old formats do not include MAINLAYER info, so we set MAINLAYER visible
                 if (layerVisibility.ContainsKey("MAINLAYER") == false)
                     layerVisibility["MAINLAYER"] = true;
 
