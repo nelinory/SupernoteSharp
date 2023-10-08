@@ -146,13 +146,11 @@ namespace SupernoteSharp.Business
                     Queue<(byte, int)> waiting = new Queue<(byte, int)>();
                     while (true)
                     {
-                        byte colorcode = bin.MoveNext() ? bin.Current : (byte)0;
-                        int length = bin.MoveNext() ? bin.Current : 0;
+                        bin.MoveNext();
+                        byte colorcode = bin.Current;
+                        bin.MoveNext();
+                        int length = bin.Current;
                         bool dataPushed = false;
-
-                        // we reach the end of the enumeration due to colorcode being 0
-                        if (colorcode == 0)
-                            break;
 
                         if (holder.Item2 > 0)
                         {
