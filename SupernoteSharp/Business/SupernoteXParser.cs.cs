@@ -123,7 +123,7 @@ namespace SupernoteSharp.Business
 
             foreach (string itemKey in itemKeys)
             {
-                if (footer[itemKey] is List<object> itemList)
+                if (footer[itemKey] is List<string> itemList)
                     itemAddresses.AddRange(itemList.Select(p => Convert.ToInt32(p)));
                 else
                     itemAddresses.Add(Convert.ToInt32(footer[itemKey]));

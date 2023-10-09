@@ -142,20 +142,11 @@ namespace SupernoteSharp.Business
             IEnumerable<string> propertyKeys = footer.Keys.Where(p => p.StartsWith(propertyPrefix));
             foreach (string property in propertyKeys)
             {
-                if (footer[property].GetType() != typeof(string))
-                {
-                    // TODO: Need Supernote A5 test note
-                    /*
-                    if type(footer[k]) == list:
-                        for _ in range(len(footer[k])):
-                            page_numbers.append(int(k[6:10]) - 1)
-                    else:
-                        page_numbers.append(int(k[6:10]) - 1) # e.g. get '0123' from 'TITLE_01234567'                   
-                    */
-                    throw new NotImplementedException();
-                }
+                // get '0123' from 'TITLE_01234567'
+                if (footer[property] is List<string> itemList)
+                    pageNumbers.AddRange(itemList.Select(p => Convert.ToInt32(p.Substring(6, 4))));
                 else
-                    pageNumbers.Add(Int32.Parse(property.Substring(6, 4))); // get '0123' from 'TITLE_01234567'
+                    pageNumbers.Add(Int32.Parse(property.Substring(6, 4)));
             }
 
             return pageNumbers;
