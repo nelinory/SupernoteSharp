@@ -142,9 +142,9 @@ namespace SupernoteSharp.Business
             IEnumerable<string> propertyKeys = footer.Keys.Where(p => p.StartsWith(propertyPrefix));
             foreach (string property in propertyKeys)
             {
-                // get '0123' from 'TITLE_01234567'
+                // get '0123' from 'TITLE_01234567' or 'LINKI_01234567' or 'LINKO_01234567'
                 if (footer[property] is List<string> itemList)
-                    pageNumbers.AddRange(itemList.Select(p => Convert.ToInt32(p.Substring(6, 4))));
+                    pageNumbers.AddRange(itemList.Select(p => Convert.ToInt32(property.Substring(6, 4))));
                 else
                     pageNumbers.Add(Int32.Parse(property.Substring(6, 4)));
             }
