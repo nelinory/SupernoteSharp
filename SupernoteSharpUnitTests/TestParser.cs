@@ -15,6 +15,7 @@ namespace SupernoteSharpUnitTests
         private static FileStream _A5X_TestNote;
         private static FileStream _A5X_TestNote_Links;
         private static FileStream _A5X_TestNote_Pdf_Mark;
+        private static FileStream _A5X_TestNote_With_Pdf_Template;
         private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
         [TestInitialize]
@@ -23,6 +24,7 @@ namespace SupernoteSharpUnitTests
             _A5X_TestNote = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Links = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Links.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Pdf_Mark = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark"), FileMode.Open, FileAccess.Read);
+            _A5X_TestNote_With_Pdf_Template = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.note"), FileMode.Open, FileAccess.Read);
         }
 
         [TestCleanup]
@@ -36,6 +38,9 @@ namespace SupernoteSharpUnitTests
 
             if (_A5X_TestNote_Pdf_Mark != null)
                 _A5X_TestNote_Pdf_Mark.Close();
+
+            if (_A5X_TestNote_With_Pdf_Template != null)
+                _A5X_TestNote_With_Pdf_Template.Close();
         }
 
         [TestMethod]
@@ -56,17 +61,18 @@ namespace SupernoteSharpUnitTests
             expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
             actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
-        }
-
-        [TestMethod]
-        public void TestParseMetadata_Mark()
-        {
-            Parser parser = new Parser();
 
             // generate metadata from a mark test file
-            Metadata actual = parser.ParseMetadata(_A5X_TestNote_Pdf_Mark, Policy.Strict);
-            string expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark.json"));
-            Metadata expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
+            actual = parser.ParseMetadata(_A5X_TestNote_Pdf_Mark, Policy.Strict);
+            expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark.json"));
+            expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
+
+            actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
+
+            // generate metadata from a note test file with pdf template
+            actual = parser.ParseMetadata(_A5X_TestNote_With_Pdf_Template, Policy.Strict);
+            expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.json"));
+            expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
             actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
         }
@@ -91,7 +97,32 @@ namespace SupernoteSharpUnitTests
             notebook.Pages[2].LayerOrder[3].Should().Be("MAINLAYER");
             notebook.Pages[2].Protocol.Should().Be("RATTA_RLE");
             notebook.Pages[3].Style.Should().StartWith("user_"); // test note page 4 have custom templates
+            notebook.PdfStyle.Should().Be("none");
+            notebook.PdfStyleMd5.Should().Be("0");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Normal);
             notebook.FileId.Should().Be("F20230426085756711303PkPWUQZNRUPC");
+            notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
+        }
+
+        [TestMethod]
+        public void TestLoadNotebook_Note_Links()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Links, Policy.Strict);
+
+            notebook.Metadata.Should().NotBeNull();
+            notebook.FileType.Should().Be("NOTE");
+            notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20220013");
+            notebook.Cover.Content.Should().BeNull();
+            notebook.Titles.Count.Should().Be(0);
+            notebook.Keywords.Count.Should().Be(0);
+            notebook.Links.Count.Should().Be(8); // test note have 8 links: 8 internal
+            notebook.TotalPages.Should().Be(2); // test note have 2 pages
+            notebook.Pages.Count.Should().Be(2); // test note have 2 pages
+            notebook.PdfStyle.Should().Be("none");
+            notebook.PdfStyleMd5.Should().Be("0");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Normal);
+            notebook.FileId.Should().Be("F20230606174214710369I9D1tLkndv5d");
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
 
@@ -111,8 +142,30 @@ namespace SupernoteSharpUnitTests
             notebook.Pages[0].LayerOrder[0].Should().Be("MAINLAYER");
             notebook.Pages[0].Protocol.Should().Be("RATTA_RLE");
             notebook.Pages[0].Style.Should().StartWith("none"); // test mark page have no custom templates
+            notebook.PdfStyle.Should().Be("none");
+            notebook.PdfStyleMd5.Should().Be("0");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Normal);
             notebook.FileId.Should().Be("F20230615115246511903rxKCoF4YD7zG");
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test mark does not have realtime recognition enabled
+        }
+
+        [TestMethod]
+        public void TestLoadNotebook_Pdf_Template()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_With_Pdf_Template, Policy.Strict);
+
+            notebook.Metadata.Should().NotBeNull();
+            notebook.FileType.Should().Be("NOTE");
+            notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20220013");
+            notebook.Cover.Content.Should().BeNull();
+            notebook.TotalPages.Should().Be(3); // test mark have 3 pages
+            notebook.Pages.Count.Should().Be(3); // test mark have 3 pages
+            notebook.PdfStyle.Should().Be("user_pdf_Pdf_Template_3");
+            notebook.PdfStyleMd5.Should().Be("eddc1d3fb9837d1b8812ef3eb77dc5e1_9954");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Pdf);
+            notebook.FileId.Should().Be("F20231219133335147638a6XV72A419r2");
+            notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
     }
 }

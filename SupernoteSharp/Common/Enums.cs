@@ -12,4 +12,6 @@
     public enum LinkDirection { Out = 0, In = 1 }
 
     public enum LinkType { Page = 0, File = 1, Web = 4 }
+
+    public enum StyleUsageType { Normal = 0, Pdf = 2 }
 }

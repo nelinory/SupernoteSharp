@@ -17,6 +17,9 @@ namespace SupernoteSharp.Entities
         public string FileId { get; private set; }
         public bool IsRealtimeRecognition { get; private set; }
         public int TotalPages { get { return Pages.Count; } }
+        public string PdfStyle { get; private set; }
+        public string PdfStyleMd5 { get; private set; }
+        public StyleUsageType StyleUsageType { get; private set; }
 
         public Notebook(Metadata metadata)
         {
@@ -63,6 +66,11 @@ namespace SupernoteSharp.Entities
             FileType = (string)metadata.Header["FILE_TYPE"];
             FileId = (string)metadata.Header["FILE_ID"];
             IsRealtimeRecognition = (string)Metadata.Header["FILE_RECOGN_TYPE"] == "1";
+
+            // pdf note templates
+            PdfStyle = metadata.Header.ContainsKey("PDFSTYLE") == true ? (string)metadata.Header["PDFSTYLE"] : "none";
+            PdfStyleMd5 = metadata.Header.ContainsKey("PDFSTYLEMD5") == true ? (string)metadata.Header["PDFSTYLEMD5"] : "0";
+            StyleUsageType = metadata.Header.ContainsKey("STYLEUSAGETYPE") == true ? Enum.Parse<StyleUsageType>(metadata.Header["STYLEUSAGETYPE"].ToString()) : StyleUsageType.Normal; ;
         }
 
         public Page Page(int pageNumber)

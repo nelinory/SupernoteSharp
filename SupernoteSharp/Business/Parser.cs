@@ -104,6 +104,11 @@ namespace SupernoteSharp.Business
                 int recognTextAddress = metadata.Pages[i].ContainsKey("RECOGNTEXT") == true ? Int32.Parse((string)metadata.Pages[i]["RECOGNTEXT"]) : 0;
                 if (recognTextAddress > 0)
                     notebook.Pages[i].RecognText = GetContentAtAddress(fileStream, recognTextAddress);
+
+                // attach external link info
+                int externalLinkInfoAddress = metadata.Pages[i].ContainsKey("EXTERNALLINKINFO") == true ? Int32.Parse((string)metadata.Pages[i]["EXTERNALLINKINFO"]) : 0;
+                if (externalLinkInfoAddress > 0)
+                    notebook.Pages[i].ExternalLinkInfo = GetContentAtAddress(fileStream, externalLinkInfoAddress);
             }
 
             return notebook;

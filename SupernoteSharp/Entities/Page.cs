@@ -20,6 +20,7 @@ namespace SupernoteSharp.Entities
         public int RecognStatus { get; private set; }
         public byte[] RecognFile { get; set; }
         public byte[] RecognText { get; set; }
+        public byte[] ExternalLinkInfo { get; set; }
 
         public Page(Dictionary<string, object> metadata)
         {

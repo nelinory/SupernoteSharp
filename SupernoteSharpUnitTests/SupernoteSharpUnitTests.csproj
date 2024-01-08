@@ -124,10 +124,10 @@
     <None Update="TestData\A5X_TestNote_Vectorization.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\A5X_TestNote_Vectorization_Native.pdf">
+    <None Update="TestData\A5X_TestNote_With_Pdf_Template.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestData\A5X_TestNote_Vectorization_Native.png">
+    <None Update="TestData\A5X_TestNote_With_Pdf_Template.note">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
