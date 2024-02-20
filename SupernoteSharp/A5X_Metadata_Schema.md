@@ -16,16 +16,20 @@ header
 	"FILE_ID"
 	"FILE_RECOGN_TYPE"
 	"FILE_RECOGN_LANGUAGE"
+    "PDFSTYLE" - "none" means no PDF template is used
+    "PDFSTYLEMD5" - 0 means no PDF template is used
+    "STYLEUSAGETYPE" - 0 means normal style (IMAGE), 2 is PDF template as style (PDF)
 footer
 	"PAGEXXXX" [..] - max pages 9999
 	"TITLE_XXXX" [..]
 	"KEYWORD_XXXX" [..]
+	"COVER_X" - COVER_1 means there is cover, COVER_0 means no cover
+	"DIRTY"
 	"LINKO_XXXX" [..] - outbound links
 	"LINKI_XXXX" [..] - inbound links
-	"STYLE_XXXX" [..]
-	"COVER_1" - COVER_1 means there is cover, COVER_0 means no cover
-	"DIRTY"
 	"FILE_FEATURE"
+    "PDFSTYLELIST"
+	"STYLE_XXXX" [..]
 	keywords []
 		"KEYWORDPAGE"
 		"KEYWORDSEQNO"
@@ -72,6 +76,7 @@ pages
 	"RECOGNTYPE"
 	"RECOGNFILESTATUS"
 	"RECOGNLANGUAGE"
+	"EXTERNALLINKINFO"
 	"FIVESTAR" []
 	layers [] - max 5 layers supported
 		"LAYERTYPE"

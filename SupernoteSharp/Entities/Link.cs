@@ -11,6 +11,7 @@ namespace SupernoteSharp.Entities
         public int Position { get; private set; }
         public int Type { get; private set; }
         public int InOut { get; private set; }
+        public string Bitmap { get; private set; }
         public (int left, int top, int width, int height) Rect { get; private set; }
         public string Timestamp { get; private set; }
         public string FilePath { get; private set; }
@@ -25,6 +26,7 @@ namespace SupernoteSharp.Entities
             Position = Int32.Parse(((string)metadata["LINKRECT"]).Split(',')[1]); // get top value from "left,top,width,height"
             Type = Int32.Parse((string)metadata["LINKTYPE"]);
             InOut = Int32.Parse((string)metadata["LINKINOUT"]);
+            Bitmap = (string)metadata["LINKBITMAP"];
 
             // rectangle
             string[] rectangle = ((string)metadata["LINKRECT"]).Split(',');

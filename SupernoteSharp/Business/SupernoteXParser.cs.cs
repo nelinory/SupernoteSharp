@@ -30,8 +30,8 @@ namespace SupernoteSharp.Business
                     "noteSN_FILE_VER_20210009", // Firmware version C.291
                     "noteSN_FILE_VER_20210010", // Firmware version Chauvet 2.1.6
                     "noteSN_FILE_VER_20220011", // Firmware version Chauvet 2.5.17
-                    "noteSN_FILE_VER_20220013", // Firmware version Chauvet 2.6.19
-                    "markSN_FILE_VER_20220013"  // Firmware version Chauvet 2.8.22
+                    "noteSN_FILE_VER_20220013", // Firmware version Chauvet 2.9.24
+                    "markSN_FILE_VER_20220013"  // Firmware version Chauvet 2.9.24
                 };
             }
         }
@@ -123,7 +123,7 @@ namespace SupernoteSharp.Business
 
             foreach (string itemKey in itemKeys)
             {
-                if (footer[itemKey] is List<object> itemList)
+                if (footer[itemKey] is List<string> itemList)
                     itemAddresses.AddRange(itemList.Select(p => Convert.ToInt32(p)));
                 else
                     itemAddresses.Add(Convert.ToInt32(footer[itemKey]));

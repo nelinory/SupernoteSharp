@@ -1,0 +1,171 @@
+{
+  "__signature__": "noteSN_FILE_VER_20220013",
+  "__header__": {
+    "MODULE_LABEL": "SNFILE_FEATURE",
+    "FILE_TYPE": "NOTE",
+    "APPLY_EQUIPMENT": "A5X",
+    "FINALOPERATION_PAGE": "1",
+    "FINALOPERATION_LAYER": "1",
+    "ORIGINAL_STYLE": "style_white_a5x",
+    "ORIGINAL_STYLEMD5": "0",
+    "DEVICE_DPI": "0",
+    "SOFT_DPI": "0",
+    "FILE_PARSE_TYPE": "0",
+    "RATTA_ETMD": "0",
+    "APP_VERSION": "0",
+    "FILE_ID": "F20231219133335147638a6XV72A419r2",
+    "FILE_RECOGN_TYPE": "0",
+    "FILE_RECOGN_LANGUAGE": "none",
+    "PDFSTYLE": "user_pdf_Pdf_Template_3",
+    "PDFSTYLEMD5": "eddc1d3fb9837d1b8812ef3eb77dc5e1_9954",
+    "STYLEUSAGETYPE": "2"
+  },
+  "__footer__": {
+    "DIRTY": "0",
+    "FILE_FEATURE": "351477",
+    "PDFSTYLELIST": "461",
+    "COVER_0": "0",
+    "STYLE_style_white_a5x": "720",
+    "STYLE_user_pdf_Pdf_Template_1ceba6dbd269b88f41a82eecc37266baa_9954": "1048",
+    "STYLE_user_pdf_Pdf_Template_219b74095c8ba981bc5bcabe65c2f2e6e_9954": "52581",
+    "STYLE_user_pdf_Pdf_Template_3eddc1d3fb9837d1b8812ef3eb77dc5e1_9954": "138132",
+    "STYLE_style_white": "216876",
+    "PAGE1": "277174",
+    "PAGE2": "279210",
+    "PAGE3": "340754"
+  },
+  "__pages__": [
+    {
+      "PAGESTYLE": "user_pdf_Pdf_Template_1",
+      "PAGESTYLEMD5": "ceba6dbd269b88f41a82eecc37266baa_9954",
+      "LAYERINFO": "[{\"layerId\"#3,\"name\"#\"Layer 3\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#2,\"name\"#\"Layer 2\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#1,\"name\"#\"Layer 1\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#0,\"name\"#\"Main Layer\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#true,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#-1,\"name\"#\"Background Layer\",\"isBackgroundLayer\"#true,\"isAllowAdd\"#true,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false}]",
+      "LAYERSEQ": "MAINLAYER,BGLAYER",
+      "MAINLAYER": "222782",
+      "LAYER1": "0",
+      "LAYER2": "0",
+      "LAYER3": "0",
+      "BGLAYER": "222916",
+      "TOTALPATH": "223046",
+      "THUMBNAILTYPE": "0",
+      "RECOGNSTATUS": "0",
+      "RECOGNTEXT": "0",
+      "RECOGNFILE": "0",
+      "PAGEID": "P20240107094330006193yTYICtknINqA",
+      "RECOGNTYPE": "0",
+      "RECOGNFILESTATUS": "0",
+      "RECOGNLANGUAGE": "none",
+      "EXTERNALLINKINFO": "0",
+      "__layers__": [
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "MAINLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "217204",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        },
+        {},
+        {},
+        {},
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "BGLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "1048",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        }
+      ]
+    },
+    {
+      "PAGESTYLE": "user_pdf_Pdf_Template_2",
+      "PAGESTYLEMD5": "19b74095c8ba981bc5bcabe65c2f2e6e_9954",
+      "LAYERINFO": "[{\"layerId\"#3,\"name\"#\"Layer 3\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#2,\"name\"#\"Layer 2\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#1,\"name\"#\"Layer 1\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#0,\"name\"#\"Main Layer\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#true,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#-1,\"name\"#\"Background Layer\",\"isBackgroundLayer\"#true,\"isAllowAdd\"#true,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false}]",
+      "LAYERSEQ": "MAINLAYER,BGLAYER",
+      "MAINLAYER": "278761",
+      "LAYER1": "0",
+      "LAYER2": "0",
+      "LAYER3": "0",
+      "BGLAYER": "278895",
+      "TOTALPATH": "0",
+      "THUMBNAILTYPE": "0",
+      "RECOGNSTATUS": "0",
+      "RECOGNTEXT": "0",
+      "RECOGNFILE": "0",
+      "PAGEID": "P20240107094344117385wHhU0MBXzaQW",
+      "RECOGNTYPE": "0",
+      "RECOGNFILESTATUS": "0",
+      "RECOGNLANGUAGE": "none",
+      "EXTERNALLINKINFO": "279026",
+      "__layers__": [
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "MAINLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "278433",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        },
+        {},
+        {},
+        {},
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "BGLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "52581",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        }
+      ]
+    },
+    {
+      "PAGESTYLE": "user_pdf_Pdf_Template_3",
+      "PAGESTYLEMD5": "eddc1d3fb9837d1b8812ef3eb77dc5e1_9954",
+      "LAYERINFO": "[{\"layerId\"#3,\"name\"#\"Layer 3\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#2,\"name\"#\"Layer 2\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#1,\"name\"#\"Layer 1\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#0,\"name\"#\"Main Layer\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#true,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#-1,\"name\"#\"Background Layer\",\"isBackgroundLayer\"#true,\"isAllowAdd\"#true,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false}]",
+      "LAYERSEQ": "MAINLAYER,BGLAYER",
+      "MAINLAYER": "285679",
+      "LAYER1": "0",
+      "LAYER2": "0",
+      "LAYER3": "0",
+      "BGLAYER": "285813",
+      "TOTALPATH": "286149",
+      "THUMBNAILTYPE": "0",
+      "RECOGNSTATUS": "0",
+      "RECOGNTEXT": "0",
+      "RECOGNFILE": "0",
+      "PAGEID": "P20240107094344116715zt5dC1OZyCnn",
+      "RECOGNTYPE": "0",
+      "RECOGNFILESTATUS": "0",
+      "RECOGNLANGUAGE": "none",
+      "EXTERNALLINKINFO": "285945",
+      "__layers__": [
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "MAINLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "280469",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        },
+        {},
+        {},
+        {},
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "BGLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "138132",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        }
+      ]
+    }
+  ]
+}
