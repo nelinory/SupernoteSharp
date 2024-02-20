@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace SupernoteSharp.Business
 {
@@ -111,6 +112,20 @@ namespace SupernoteSharp.Business
                     notebook.Pages[i].ExternalLinkInfo = GetContentAtAddress(fileStream, externalLinkInfoAddress);
             }
 
+            // attach template link data
+            List<Page> pagesWithTemplateLinks = notebook.Pages.Where(x => x.ExternalLinkInfo != null).ToList();
+            foreach (Page page in pagesWithTemplateLinks)
+            {
+                // ExternalLinkInfo contains multiple links separated by a '|' character
+                string[] links = Encoding.UTF8.GetString(page.ExternalLinkInfo).Split("|", StringSplitOptions.RemoveEmptyEntries);
+                foreach (string link in links)
+                {
+                    // each link properties are separated by a ',' character
+                    string[] linkProperties = link.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                    notebook.TemplateLinks.AddRange(GetTemplateLink(linkProperties, notebook.FileId));
+                }
+            }
+
             return notebook;
         }
 
@@ -177,6 +192,48 @@ namespace SupernoteSharp.Business
             }
 
             return bitmapAddresses;
+        }
+
+        private List<Link> GetTemplateLink(string[] templateLink, string fileId)
+        {
+            List<Link> templateLinks = new List<Link>();
+
+            Dictionary<string, object> metadata = new Dictionary<string, object>
+            {
+                ["LINKRECT"] = $"{Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[3]))}," +
+                                $"{Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[4]))}," +
+                                $"{Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[5]))}," +
+                                $"{Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[6]))}",
+                ["LINKTYPE"] = Int32.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[7]))) == 0 ? ((Int32)LinkType.Page).ToString() : ((Int32)LinkType.Web).ToString(),
+                ["LINKINOUT"] = ((Int32)LinkDirection.Out).ToString(),
+                ["LINKBITMAP"] = DateTime.Now.Ticks.ToString(),
+                ["LINKTIMESTAMP"] = DateTime.Now.Ticks.ToString(),
+                ["LINKFILE"] = templateLink[8],
+                ["LINKFILEID"] = fileId,
+                ["PAGEID"] = Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[1]))
+            };
+
+            Link linkOut = new Link(metadata)
+            {
+                PageNumber = Int32.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[0]))) - 1 // link indexes are not 0 based
+            };
+
+            templateLinks.Add(linkOut);
+
+            // in case we are building template page links, we need to ensure we have both IN and OUT links
+            // they are the same structure, with the exception of the LINKINOUT attribute
+            if (linkOut.Type == (Int32)LinkType.Page)
+            {
+                metadata["LINKINOUT"] = ((Int32)LinkDirection.In).ToString();
+                Link linkIn = new Link(metadata)
+                {
+                    PageNumber = Int32.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[2]))) - 1 // link indexes are not 0 based
+                };
+
+                templateLinks.Add(linkIn);
+            }
+
+            return templateLinks;
         }
     }
 }

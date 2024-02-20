@@ -22,6 +22,7 @@ namespace SupernoteSharpUnitTests
         private static FileStream _A5X_TestNote_Realtime;
         private static FileStream _A5X_TestNote_Vectorization;
         private static FileStream _A5X_TestNote_Pdf_Mark;
+        private static FileStream _A5X_TestNote_With_Pdf_Template;
         private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
         [TestInitialize]
@@ -32,6 +33,7 @@ namespace SupernoteSharpUnitTests
             _A5X_TestNote_Realtime = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Realtime.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Vectorization = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Vectorization.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Pdf_Mark = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark"), FileMode.Open, FileAccess.Read);
+            _A5X_TestNote_With_Pdf_Template = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.note"), FileMode.Open, FileAccess.Read);
         }
 
         [TestCleanup]
@@ -51,6 +53,9 @@ namespace SupernoteSharpUnitTests
 
             if (_A5X_TestNote_Pdf_Mark != null)
                 _A5X_TestNote_Pdf_Mark.Close();
+
+            if (_A5X_TestNote_Pdf_Mark != null)
+                _A5X_TestNote_With_Pdf_Template.Close();
         }
 
         [TestMethod]
@@ -191,7 +196,7 @@ namespace SupernoteSharpUnitTests
 
             PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
             byte[] allPages = converter.ConvertAll(enableLinks: true);
-            
+
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_Links.pdf")), allPages).Should().BeTrue();
         }
 
@@ -217,6 +222,18 @@ namespace SupernoteSharpUnitTests
             byte[] allPages = converter.ConvertAll(vectorize: true);
 
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark_Vectorization.pdf")), allPages).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void TestPdfConvert_Note_With_Pdf_Template_Vectorization()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_With_Pdf_Template, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            byte[] allPages = converter.ConvertAll(vectorize: true, enableLinks: true);
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.pdf")), allPages).Should().BeTrue();
         }
 
         [TestMethod]

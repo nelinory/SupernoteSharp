@@ -159,6 +159,8 @@ namespace SupernoteSharpUnitTests
             notebook.FileType.Should().Be("NOTE");
             notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20220013");
             notebook.Cover.Content.Should().BeNull();
+            notebook.Links.Count.Should().Be(0);
+            notebook.TemplateLinks.Count.Should().Be(7); // test note pdf template have 7 links: 6 internal and 1 external
             notebook.TotalPages.Should().Be(3); // test mark have 3 pages
             notebook.Pages.Count.Should().Be(3); // test mark have 3 pages
             notebook.PdfStyle.Should().Be("user_pdf_Pdf_Template_3");

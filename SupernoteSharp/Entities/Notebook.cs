@@ -12,6 +12,7 @@ namespace SupernoteSharp.Entities
         public List<Keyword> Keywords { get; private set; }
         public List<Title> Titles { get; private set; }
         public List<Link> Links { get; private set; }
+        public List<Link> TemplateLinks { get; private set; }
         public List<Page> Pages { get; private set; }
         public string FileType { get; private set; }
         public string FileId { get; private set; }
@@ -56,6 +57,8 @@ namespace SupernoteSharp.Entities
                     Links.Add(new Link(link));
                 }
             }
+
+            TemplateLinks = new List<Link>();
 
             Pages = new List<Page>();
             for (int i = 0; i < metadata.TotalPages; i++)

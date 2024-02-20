@@ -130,6 +130,9 @@
     <None Update="TestData\A5X_TestNote_With_Pdf_Template.note">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\A5X_TestNote_With_Pdf_Template.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

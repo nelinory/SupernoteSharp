@@ -18,7 +18,7 @@ header
 	"FILE_RECOGN_LANGUAGE"
     "PDFSTYLE" - "none" means no PDF template is used
     "PDFSTYLEMD5" - 0 means no PDF template is used
-    "STYLEUSAGETYPE" - 0 means normal style (PNG), 2 is PDF template as style (PDF)
+    "STYLEUSAGETYPE" - 0 means normal style (IMAGE), 2 is PDF template as style (PDF)
 footer
 	"PAGEXXXX" [..] - max pages 9999
 	"TITLE_XXXX" [..]

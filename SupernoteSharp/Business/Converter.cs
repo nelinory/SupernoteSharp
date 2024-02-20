@@ -338,9 +338,12 @@ namespace SupernoteSharp.Business
             private byte[] CreatePdf(Dictionary<int, VectSharp.Page> pdfPages, bool enableLinks)
             {
                 // add links if requested
-                Dictionary<string, string> links = null;
+                Dictionary<string, string> links = new Dictionary<string, string>();
                 if (enableLinks == true)
-                    links = AddLinks(pdfPages);
+                {
+                    AddLinks(pdfPages, _notebook.Links, links);
+                    AddLinks(pdfPages, _notebook.TemplateLinks, links);
+                }
 
                 // create the final pdf document
                 Document pdfDocument = new Document();
@@ -353,11 +356,8 @@ namespace SupernoteSharp.Business
                 }
             }
 
-            private Dictionary<string, string> AddLinks(Dictionary<int, VectSharp.Page> pdfPages)
+            private Dictionary<string, string> AddLinks(Dictionary<int, VectSharp.Page> pdfPages, List<Link> noteLinks, Dictionary<string, string> links)
             {
-                List<Link> noteLinks = _notebook.Links;
-                Dictionary<string, string> links = new Dictionary<string, string>();
-
                 foreach (KeyValuePair<int, VectSharp.Page> kvp in pdfPages)
                 {
                     // get all outbound links for the current page
@@ -369,7 +369,7 @@ namespace SupernoteSharp.Business
                     List<Link> webLinks = outboundLinks.Where(x => x.Type == (int)LinkType.Web).ToList();
                     foreach (Link webLink in webLinks)
                     {
-                        string webLinkTag = $"WebLink_{webLink.Metadata["LINKBITMAP"]}";
+                        string webLinkTag = $"WebLink_{webLink.Bitmap}";
                         string webLinkUrl = Encoding.UTF8.GetString(System.Convert.FromBase64String(webLink.FilePath));
 
                         kvp.Value.Graphics.StrokeRectangle(webLink.Rect.left, webLink.Rect.top, webLink.Rect.width, webLink.Rect.height,
@@ -392,8 +392,8 @@ namespace SupernoteSharp.Business
                             // each internal link is a pair of outbound and inbound, they have the same timestamp and rect coordinates
                             Link targetLink = noteLinks.Where(x => x.InOut == (int)LinkDirection.In && x.Timestamp == sourceLink.Timestamp && x.Rect.Equals(sourceLink.Rect)).FirstOrDefault();
 
-                            string sourceLinkTag = $"SourceLink_{sourceLink.Metadata["LINKBITMAP"]}";
-                            string targetLinkTag = $"TargetLink_{targetLink.Metadata["LINKBITMAP"]}";
+                            string sourceLinkTag = $"SourceLink_{sourceLink.Bitmap}";
+                            string targetLinkTag = $"TargetLink_{targetLink.Bitmap}";
 
                             pdfPages[sourceLink.PageNumber].Graphics.StrokeRectangle(sourceLink.Rect.left, sourceLink.Rect.top, sourceLink.Rect.width, sourceLink.Rect.height,
                                                                                                 Colour.FromRgba(0, 0, 0, 0), tag: sourceLinkTag);
