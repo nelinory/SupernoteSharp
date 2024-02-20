@@ -1,6 +1,6 @@
 using System.Reflection;
 
-[assembly: AssemblyVersion("0.6.*")]
+[assembly: AssemblyVersion("0.7.*")]
 [assembly: AssemblyTitle("SupernoteSharp")]
 [assembly: AssemblyProduct("SupernoteSharp")]
-[assembly: AssemblyCopyright("Copyright © nelinory 2023")]
+[assembly: AssemblyCopyright("Copyright © nelinory 2024")]
