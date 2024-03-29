@@ -17,7 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,6 +77,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestData\A5X_TestNote_1.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote_2.11.26.note">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestData\A5X_TestNote_2.pdf">

@@ -16,6 +16,7 @@ namespace SupernoteSharpUnitTests
         private static FileStream _A5X_TestNote_Links;
         private static FileStream _A5X_TestNote_Pdf_Mark;
         private static FileStream _A5X_TestNote_With_Pdf_Template;
+        private static FileStream _A5X_TestNote_2_11_26;
         private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
         [TestInitialize]
@@ -25,6 +26,7 @@ namespace SupernoteSharpUnitTests
             _A5X_TestNote_Links = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Links.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_Pdf_Mark = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_With_Pdf_Template = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.note"), FileMode.Open, FileAccess.Read);
+            _A5X_TestNote_2_11_26 = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_2.11.26.note"), FileMode.Open, FileAccess.Read);
         }
 
         [TestCleanup]
@@ -41,6 +43,9 @@ namespace SupernoteSharpUnitTests
 
             if (_A5X_TestNote_With_Pdf_Template != null)
                 _A5X_TestNote_With_Pdf_Template.Close();
+
+            if (_A5X_TestNote_2_11_26 != null)
+                _A5X_TestNote_2_11_26.Close();
         }
 
         [TestMethod]
@@ -154,6 +159,28 @@ namespace SupernoteSharpUnitTests
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote_With_Pdf_Template, Policy.Strict);
+
+            notebook.Metadata.Should().NotBeNull();
+            notebook.FileType.Should().Be("NOTE");
+            notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20220013");
+            notebook.Cover.Content.Should().BeNull();
+            notebook.Links.Count.Should().Be(0);
+            notebook.TemplateLinks.Count.Should().Be(7); // test note pdf template have 7 links: 6 internal and 1 external
+            notebook.TotalPages.Should().Be(3); // test mark have 3 pages
+            notebook.Pages.Count.Should().Be(3); // test mark have 3 pages
+            notebook.PdfStyle.Should().Be("user_pdf_Pdf_Template_3");
+            notebook.PdfStyleMd5.Should().Be("eddc1d3fb9837d1b8812ef3eb77dc5e1_9954");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Pdf);
+            notebook.FileId.Should().Be("F20231219133335147638a6XV72A419r2");
+            notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void TestLoadNotebook_2_11_26()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_2_11_26, Policy.Strict);
 
             notebook.Metadata.Should().NotBeNull();
             notebook.FileType.Should().Be("NOTE");

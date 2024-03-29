@@ -13,7 +13,9 @@ namespace SupernoteSharp.Business
         public Metadata ParseMetadata(FileStream fileStream, Policy policy)
         {
             Metadata result;
+            Exception exception;
 
+            // support for A5/A6 Agile
             try
             {
                 SupernoteParser parser = new SupernoteParser();
@@ -26,6 +28,7 @@ namespace SupernoteSharp.Business
                 // ignore this exception and try next parser
             }
 
+            // support for A5X/A6X
             try
             {
                 SupernoteXParser parser = new SupernoteXParser();
@@ -33,12 +36,13 @@ namespace SupernoteSharp.Business
 
                 return result;
             }
-            catch (UnsupportedFileFormatException)
+            catch (UnsupportedFileFormatException ex)
             {
                 // ignore this exception and try next parser
+                exception = ex;
             }
 
-            throw new UnsupportedFileFormatException("Unsupported file format");
+            throw new UnsupportedFileFormatException($"Unsupported file format. {exception.Message}.");
         }
 
         public Notebook LoadNotebook(FileStream fileStream, Policy policy)
