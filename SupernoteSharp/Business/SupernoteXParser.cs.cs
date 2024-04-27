@@ -33,9 +33,9 @@ namespace SupernoteSharp.Business
                     "markSN_FILE_VER_20220011", // Firmware version Chauvet 2.5.17
                     "noteSN_FILE_VER_20220011", // Firmware version Chauvet 2.5.17
                     "markSN_FILE_VER_20220013", // Firmware version Chauvet 2.9.24
-                    "noteSN_FILE_VER_20220013"  // Firmware version Chauvet 2.9.24
-                  //  "noteSN_FILE_VER_20220014", // Firmware version Chauvet 2.11.26
-                  //  "markSN_FILE_VER_20220014"  // Firmware version Chauvet 2.11.26
+                    "noteSN_FILE_VER_20220013", // Firmware version Chauvet 2.9.24
+                    "noteSN_FILE_VER_20230014", // Firmware version Chauvet 2.11.26
+                    "markSN_FILE_VER_20230014"  // Firmware version Chauvet 2.11.26
                 };
             }
         }

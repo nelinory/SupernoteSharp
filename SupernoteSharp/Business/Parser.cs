@@ -42,7 +42,7 @@ namespace SupernoteSharp.Business
                 exception = ex;
             }
 
-            throw new UnsupportedFileFormatException($"Unsupported file format. {exception.Message}.");
+            throw new UnsupportedFileFormatException($"Unsupported file format. {exception.Message}");
         }
 
         public Notebook LoadNotebook(FileStream fileStream, Policy policy)

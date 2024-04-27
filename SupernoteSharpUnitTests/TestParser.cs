@@ -80,6 +80,13 @@ namespace SupernoteSharpUnitTests
             expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
             actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
+
+            // generate metadata from a note test file for 2_11_26 firmware
+            actual = parser.ParseMetadata(_A5X_TestNote_2_11_26, Policy.Strict);
+            expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_2.11.26.json"));
+            expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
+
+            actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
         }
 
         [TestMethod]
@@ -104,7 +111,7 @@ namespace SupernoteSharpUnitTests
             notebook.Pages[3].Style.Should().StartWith("user_"); // test note page 4 have custom templates
             notebook.PdfStyle.Should().Be("none");
             notebook.PdfStyleMd5.Should().Be("0");
-            notebook.StyleUsageType.Should().Be(StyleUsageType.Normal);
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Default);
             notebook.FileId.Should().Be("F20230426085756711303PkPWUQZNRUPC");
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
@@ -126,7 +133,7 @@ namespace SupernoteSharpUnitTests
             notebook.Pages.Count.Should().Be(2); // test note have 2 pages
             notebook.PdfStyle.Should().Be("none");
             notebook.PdfStyleMd5.Should().Be("0");
-            notebook.StyleUsageType.Should().Be(StyleUsageType.Normal);
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Default);
             notebook.FileId.Should().Be("F20230606174214710369I9D1tLkndv5d");
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
@@ -149,7 +156,7 @@ namespace SupernoteSharpUnitTests
             notebook.Pages[0].Style.Should().StartWith("none"); // test mark page have no custom templates
             notebook.PdfStyle.Should().Be("none");
             notebook.PdfStyleMd5.Should().Be("0");
-            notebook.StyleUsageType.Should().Be(StyleUsageType.Normal);
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Default);
             notebook.FileId.Should().Be("F20230615115246511903rxKCoF4YD7zG");
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test mark does not have realtime recognition enabled
         }
@@ -175,7 +182,14 @@ namespace SupernoteSharpUnitTests
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
 
-        [Ignore]
+        //[TestMethod]
+        //public void TestLoadNotebook_2_11_26_Strict()
+        //{
+        //    Parser parser = new Parser();
+        //    _ = parser.Invoking(y => y.LoadNotebook(_A5X_TestNote_2_11_26, Policy.Strict)).Should().Throw<UnsupportedFileFormatException>()
+        //            .WithMessage("Unsupported file format. Signature found: noteSN_FILE_VER_20230014");
+        //}
+
         [TestMethod]
         public void TestLoadNotebook_2_11_26()
         {
@@ -184,16 +198,16 @@ namespace SupernoteSharpUnitTests
 
             notebook.Metadata.Should().NotBeNull();
             notebook.FileType.Should().Be("NOTE");
-            notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20220013");
+            notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20230014");
             notebook.Cover.Content.Should().BeNull();
-            notebook.Links.Count.Should().Be(0);
-            notebook.TemplateLinks.Count.Should().Be(7); // test note pdf template have 7 links: 6 internal and 1 external
+            notebook.Links.Count.Should().Be(3);
+            notebook.TemplateLinks.Count.Should().Be(0);
             notebook.TotalPages.Should().Be(3); // test mark have 3 pages
             notebook.Pages.Count.Should().Be(3); // test mark have 3 pages
-            notebook.PdfStyle.Should().Be("user_pdf_Pdf_Template_3");
-            notebook.PdfStyleMd5.Should().Be("eddc1d3fb9837d1b8812ef3eb77dc5e1_9954");
-            notebook.StyleUsageType.Should().Be(StyleUsageType.Pdf);
-            notebook.FileId.Should().Be("F20231219133335147638a6XV72A419r2");
+            notebook.PdfStyle.Should().Be("none");
+            notebook.PdfStyleMd5.Should().Be("0");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Image);
+            notebook.FileId.Should().Be("F20240221111319916429VSQ21RFBB6aU");
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
     }

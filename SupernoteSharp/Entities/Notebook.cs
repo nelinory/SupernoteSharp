@@ -73,7 +73,7 @@ namespace SupernoteSharp.Entities
             // pdf note templates
             PdfStyle = metadata.Header.ContainsKey("PDFSTYLE") == true ? (string)metadata.Header["PDFSTYLE"] : "none";
             PdfStyleMd5 = metadata.Header.ContainsKey("PDFSTYLEMD5") == true ? (string)metadata.Header["PDFSTYLEMD5"] : "0";
-            StyleUsageType = metadata.Header.ContainsKey("STYLEUSAGETYPE") == true ? Enum.Parse<StyleUsageType>(metadata.Header["STYLEUSAGETYPE"].ToString()) : StyleUsageType.Normal; ;
+            StyleUsageType = metadata.Header.ContainsKey("STYLEUSAGETYPE") == true ? Enum.Parse<StyleUsageType>(metadata.Header["STYLEUSAGETYPE"].ToString()) : StyleUsageType.Default; ;
         }
 
         public Page Page(int pageNumber)

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("SupernoteSharpUnitTests")]
 namespace SupernoteSharp.Common
 {
     internal class ConverterException : Exception

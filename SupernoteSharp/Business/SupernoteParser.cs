@@ -33,14 +33,14 @@ namespace SupernoteSharp.Business
         internal Metadata ParseStream(FileStream fileStream, Policy policy)
         {
             // check file signature
-            string signature = FindMatchingSignature(fileStream);
-            if (String.IsNullOrEmpty(signature) == true)
+            (string matchedSignature, string foundSigniture) = FindMatchingSignature(fileStream);
+            if (String.IsNullOrEmpty(matchedSignature) == true)
             {
                 bool isCompatibleSignature = CheckSignatureCompatible(fileStream);
                 if (policy == Policy.Strict || isCompatibleSignature == false)
-                    throw new UnsupportedFileFormatException($"Unknown signature: {signature}");
+                    throw new UnsupportedFileFormatException($"Signature found: {foundSigniture}");
                 else
-                    signature = SN_SIGNATURES[SN_SIGNATURES.Count - 1]; // treat as latest supported signature
+                    matchedSignature = SN_SIGNATURES[SN_SIGNATURES.Count - 1]; // treat as latest supported signature
             }
 
             // parse footer block
@@ -63,7 +63,7 @@ namespace SupernoteSharp.Business
             }
 
             Metadata result = new Metadata();
-            result.Signature = signature;
+            result.Signature = matchedSignature;
             result.Header = header;
             result.Footer = footer;
             result.Pages = pages;
@@ -111,9 +111,10 @@ namespace SupernoteSharp.Business
             return ExtractParameters(Encoding.UTF8.GetString(blockBytes));
         }
 
-        private string FindMatchingSignature(FileStream fileStream)
+        private (string matchedSignature, string foundSigniture) FindMatchingSignature(FileStream fileStream)
         {
-            string result = String.Empty;
+            string matchedSignature = String.Empty;
+            string foundSigniture = String.Empty;
 
             foreach (string signature in SN_SIGNATURES)
             {
@@ -122,8 +123,11 @@ namespace SupernoteSharp.Business
                 {
                     fileStream.Seek(0, SeekOrigin.Begin);
                     fileStream.Read(data, 0, signature.Length);
-                    if (signature.Equals(Encoding.UTF8.GetString(data)))
-                        return signature;
+
+                    foundSigniture = Encoding.UTF8.GetString(data);
+
+                    if (signature.Equals(foundSigniture))
+                        return (signature, foundSigniture);
                 }
                 catch
                 {
@@ -131,7 +135,7 @@ namespace SupernoteSharp.Business
                 }
             }
 
-            return result;
+            return (matchedSignature, foundSigniture);
         }
 
         private bool CheckSignatureCompatible(FileStream fileStream)
