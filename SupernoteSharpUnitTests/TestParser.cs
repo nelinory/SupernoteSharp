@@ -3,51 +3,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SupernoteSharp.Business;
 using SupernoteSharp.Common;
 using SupernoteSharp.Entities;
-using System;
 using System.IO;
 using System.Text.Json;
 
 namespace SupernoteSharpUnitTests
 {
     [TestClass]
-    public class TestParser
+    public class TestParser: TestBase
     {
-        private static FileStream _A5X_TestNote;
-        private static FileStream _A5X_TestNote_Links;
-        private static FileStream _A5X_TestNote_Pdf_Mark;
-        private static FileStream _A5X_TestNote_With_Pdf_Template;
-        private static FileStream _A5X_TestNote_2_11_26;
-        private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
-
-        [TestInitialize]
-        public void Setup()
-        {
-            _A5X_TestNote = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.note"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_Links = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Links.note"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_Pdf_Mark = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_With_Pdf_Template = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.note"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_2_11_26 = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_2.11.26.note"), FileMode.Open, FileAccess.Read);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            if (_A5X_TestNote != null)
-                _A5X_TestNote.Close();
-
-            if (_A5X_TestNote_Links != null)
-                _A5X_TestNote_Links.Close();
-
-            if (_A5X_TestNote_Pdf_Mark != null)
-                _A5X_TestNote_Pdf_Mark.Close();
-
-            if (_A5X_TestNote_With_Pdf_Template != null)
-                _A5X_TestNote_With_Pdf_Template.Close();
-
-            if (_A5X_TestNote_2_11_26 != null)
-                _A5X_TestNote_2_11_26.Close();
-        }
-
         [TestMethod]
         public void TestParseMetadata_Note()
         {
@@ -63,6 +26,20 @@ namespace SupernoteSharpUnitTests
             // generate metadata from a note test file with link
             actual = parser.ParseMetadata(_A5X_TestNote_Links, Policy.Strict);
             expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_Links.json"));
+            expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
+
+            actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
+
+            // generate metadata from a realtime note test file
+            actual = parser.ParseMetadata(_A5X_TestNote_Realtime, Policy.Strict);
+            expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_Realtime.json"));
+            expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
+
+            actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
+
+            // generate metadata from a vectorization note test file
+            actual = parser.ParseMetadata(_A5X_TestNote_Vectorization, Policy.Strict);
+            expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_Vectorization.json"));
             expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
             actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
@@ -135,6 +112,50 @@ namespace SupernoteSharpUnitTests
             notebook.PdfStyleMd5.Should().Be("0");
             notebook.StyleUsageType.Should().Be(StyleUsageType.Default);
             notebook.FileId.Should().Be("F20230606174214710369I9D1tLkndv5d");
+            notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
+        }
+
+        [TestMethod]
+        public void TestLoadNotebook_Note_Realtime()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Realtime, Policy.Strict);
+
+            notebook.Metadata.Should().NotBeNull();
+            notebook.FileType.Should().Be("NOTE");
+            notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20220013");
+            notebook.Cover.Content.Should().BeNull();
+            notebook.Titles.Count.Should().Be(0);
+            notebook.Keywords.Count.Should().Be(0);
+            notebook.Links.Count.Should().Be(0);
+            notebook.TotalPages.Should().Be(2); // test note have 2 pages
+            notebook.Pages.Count.Should().Be(2); // test note have 2 pages
+            notebook.PdfStyle.Should().Be("none");
+            notebook.PdfStyleMd5.Should().Be("0");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Default);
+            notebook.FileId.Should().Be("F20230623105319782029GcclbjlFqsoq");
+            notebook.IsRealtimeRecognition.Should().BeTrue(); // test note does have realtime recognition enabled
+        }
+
+        [TestMethod]
+        public void TestLoadNotebook_Note_Vectorization()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Vectorization, Policy.Strict);
+
+            notebook.Metadata.Should().NotBeNull();
+            notebook.FileType.Should().Be("NOTE");
+            notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20220013");
+            notebook.Cover.Content.Should().BeNull();
+            notebook.Titles.Count.Should().Be(0);
+            notebook.Keywords.Count.Should().Be(0);
+            notebook.Links.Count.Should().Be(0);
+            notebook.TotalPages.Should().Be(1); // test note have 1 page
+            notebook.Pages.Count.Should().Be(1); // test note have 1 page
+            notebook.PdfStyle.Should().Be("none");
+            notebook.PdfStyleMd5.Should().Be("0");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Default);
+            notebook.FileId.Should().Be("F20230617090423828272YLyqIslswPlI");
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
 
