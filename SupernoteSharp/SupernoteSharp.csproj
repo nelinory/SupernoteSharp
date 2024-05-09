@@ -13,7 +13,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 		<PackageTags>supernote convert multiplatform export ratta</PackageTags>
-		<Version>0.7.8815</Version>
+		<Version>0.8.8895</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.1" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
 		<PackageReference Include="VectSharp" Version="2.5.0" />
 		<PackageReference Include="VectSharp.PDF" Version="2.7.0" />
 		<PackageReference Include="VectSharp.SVG" Version="1.9.0" />

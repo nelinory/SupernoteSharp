@@ -1,0 +1,117 @@
+{
+  "__signature__": "noteSN_FILE_VER_20220013",
+  "__header__": {
+    "MODULE_LABEL": "SNFILE_FEATURE",
+    "FILE_TYPE": "NOTE",
+    "APPLY_EQUIPMENT": "A5X",
+    "FINALOPERATION_PAGE": "2",
+    "FINALOPERATION_LAYER": "1",
+    "ORIGINAL_STYLE": "style_8mm_ruled_line_a5x",
+    "ORIGINAL_STYLEMD5": "0",
+    "DEVICE_DPI": "0",
+    "SOFT_DPI": "0",
+    "FILE_PARSE_TYPE": "0",
+    "RATTA_ETMD": "0",
+    "APP_VERSION": "0",
+    "FILE_ID": "F20230623105319782029GcclbjlFqsoq",
+    "FILE_RECOGN_TYPE": "1",
+    "FILE_RECOGN_LANGUAGE": "en_US"
+  },
+  "__footer__": {
+    "DIRTY": "0",
+    "FILE_FEATURE": "24",
+    "COVER_0": "0",
+    "STYLE_style_8mm_ruled_line_a5x": "368",
+    "STYLE_style_white": "878",
+    "PAGE1": "277654",
+    "PAGE2": "378805"
+  },
+  "__pages__": [
+    {
+      "PAGESTYLE": "style_8mm_ruled_line_a5x",
+      "PAGESTYLEMD5": "0",
+      "LAYERINFO": "[{\"layerId\"#3,\"name\"#\"Layer 3\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#2,\"name\"#\"Layer 2\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#1,\"name\"#\"Layer 1\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#0,\"name\"#\"Main Layer\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#true,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#-1,\"name\"#\"Background Layer\",\"isBackgroundLayer\"#true,\"isAllowAdd\"#true,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false}]",
+      "LAYERSEQ": "MAINLAYER,BGLAYER",
+      "MAINLAYER": "20726",
+      "LAYER1": "0",
+      "LAYER2": "0",
+      "LAYER3": "0",
+      "BGLAYER": "20858",
+      "TOTALPATH": "62399",
+      "THUMBNAILTYPE": "0",
+      "RECOGNSTATUS": "1",
+      "RECOGNTEXT": "57755",
+      "RECOGNFILE": "20987",
+      "PAGEID": "P20230623105319784162ObeZK8lEEH11",
+      "RECOGNTYPE": "0",
+      "RECOGNFILESTATUS": "1",
+      "RECOGNLANGUAGE": "none",
+      "__layers__": [
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "MAINLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "1206",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        },
+        {},
+        {},
+        {},
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "BGLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "368",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        }
+      ]
+    },
+    {
+      "PAGESTYLE": "style_8mm_ruled_line_a5x",
+      "PAGESTYLEMD5": "0",
+      "LAYERINFO": "[{\"layerId\"#3,\"name\"#\"Layer 3\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#2,\"name\"#\"Layer 2\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#1,\"name\"#\"Layer 1\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#true,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#0,\"name\"#\"Main Layer\",\"isBackgroundLayer\"#false,\"isAllowAdd\"#false,\"isCurrentLayer\"#true,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false},{\"layerId\"#-1,\"name\"#\"Background Layer\",\"isBackgroundLayer\"#true,\"isAllowAdd\"#true,\"isCurrentLayer\"#false,\"isVisible\"#true,\"isDeleted\"#false,\"isAllowUp\"#false,\"isAllowDown\"#false}]",
+      "LAYERSEQ": "MAINLAYER,BGLAYER",
+      "MAINLAYER": "285639",
+      "LAYER1": "0",
+      "LAYER2": "0",
+      "LAYER3": "0",
+      "BGLAYER": "285773",
+      "TOTALPATH": "305482",
+      "THUMBNAILTYPE": "0",
+      "RECOGNSTATUS": "1",
+      "RECOGNTEXT": "303802",
+      "RECOGNFILE": "285902",
+      "PAGEID": "P20230702103717442469QxWU2F6L5Ct4",
+      "RECOGNTYPE": "0",
+      "RECOGNFILESTATUS": "1",
+      "RECOGNLANGUAGE": "none",
+      "__layers__": [
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "MAINLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "278863",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        },
+        {},
+        {},
+        {},
+        {
+          "LAYERTYPE": "NOTE",
+          "LAYERPROTOCOL": "RATTA_RLE",
+          "LAYERNAME": "BGLAYER",
+          "LAYERPATH": "0",
+          "LAYERBITMAP": "368",
+          "LAYERVECTORGRAPH": "0",
+          "LAYERRECOGN": "0"
+        }
+      ]
+    }
+  ]
+}

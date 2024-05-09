@@ -12,7 +12,7 @@ namespace SupernoteSharp.Business
         {
             get
             {
-                return @"noteSN_FILE_VER_\d{8}";
+                return @"(note|mark)SN_FILE_VER_\d{8}";
             }
         }
 
@@ -28,10 +28,14 @@ namespace SupernoteSharp.Business
                     "noteSN_FILE_VER_20200007", // Firmware version C.159
                     "noteSN_FILE_VER_20200008", // Firmware version C.237
                     "noteSN_FILE_VER_20210009", // Firmware version C.291
+                    "markSN_FILE_VER_20220011", // Firmware version Chauvet 2.1.6
                     "noteSN_FILE_VER_20210010", // Firmware version Chauvet 2.1.6
+                    "markSN_FILE_VER_20220011", // Firmware version Chauvet 2.5.17
                     "noteSN_FILE_VER_20220011", // Firmware version Chauvet 2.5.17
+                    "markSN_FILE_VER_20220013", // Firmware version Chauvet 2.9.24
                     "noteSN_FILE_VER_20220013", // Firmware version Chauvet 2.9.24
-                    "markSN_FILE_VER_20220013"  // Firmware version Chauvet 2.9.24
+                    "noteSN_FILE_VER_20230014", // Firmware version Chauvet 2.11.26
+                    "markSN_FILE_VER_20230014"  // Firmware version Chauvet 2.11.26
                 };
             }
         }

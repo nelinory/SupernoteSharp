@@ -13,5 +13,5 @@
 
     public enum LinkType { Page = 0, File = 1, Web = 4 }
 
-    public enum StyleUsageType { Normal = 0, Pdf = 2 }
+    public enum StyleUsageType { Default = 0, Image = 1, Pdf = 2 }
 }

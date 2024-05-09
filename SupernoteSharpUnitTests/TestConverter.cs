@@ -6,7 +6,6 @@ using SixLabors.ImageSharp.PixelFormats;
 using SupernoteSharp.Business;
 using SupernoteSharp.Common;
 using SupernoteSharp.Entities;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -15,49 +14,8 @@ using static SupernoteSharp.Business.Converter;
 namespace SupernoteSharpUnitTests
 {
     [TestClass]
-    public class TestConverter
+    public class TestConverter: TestBase
     {
-        private static FileStream _A5X_TestNote;
-        private static FileStream _A5X_TestNote_Links;
-        private static FileStream _A5X_TestNote_Realtime;
-        private static FileStream _A5X_TestNote_Vectorization;
-        private static FileStream _A5X_TestNote_Pdf_Mark;
-        private static FileStream _A5X_TestNote_With_Pdf_Template;
-        private static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
-
-        [TestInitialize]
-        public void Setup()
-        {
-            _A5X_TestNote = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.note"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_Links = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Links.note"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_Realtime = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Realtime.note"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_Vectorization = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_Vectorization.note"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_Pdf_Mark = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark"), FileMode.Open, FileAccess.Read);
-            _A5X_TestNote_With_Pdf_Template = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.note"), FileMode.Open, FileAccess.Read);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            if (_A5X_TestNote != null)
-                _A5X_TestNote.Close();
-
-            if (_A5X_TestNote_Links != null)
-                _A5X_TestNote_Links.Close();
-
-            if (_A5X_TestNote_Realtime != null)
-                _A5X_TestNote_Realtime.Close();
-
-            if (_A5X_TestNote_Vectorization != null)
-                _A5X_TestNote_Vectorization.Close();
-
-            if (_A5X_TestNote_Pdf_Mark != null)
-                _A5X_TestNote_Pdf_Mark.Close();
-
-            if (_A5X_TestNote_Pdf_Mark != null)
-                _A5X_TestNote_With_Pdf_Template.Close();
-        }
-
         [TestMethod]
         public void TestImageConvert_Note()
         {
@@ -297,7 +255,7 @@ namespace SupernoteSharpUnitTests
         }
 
         [TestMethod]
-        public void TestTextConvert()
+        public void TestRealtimeConvert_Note()
         {
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Realtime, Policy.Strict);
@@ -311,6 +269,18 @@ namespace SupernoteSharpUnitTests
 
             page_0.Should().BeEquivalentTo(expected_0);
             page_1.Should().BeEquivalentTo(expected_1);
+        }
+
+        [TestMethod]
+        public void TestPdfConvert_Note_2_11_26()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_2_11_26, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            byte[] allPages = converter.ConvertAll(vectorize: true, enableLinks: true);
+
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.11.26.pdf")), allPages).Should().BeTrue();
         }
     }
 }

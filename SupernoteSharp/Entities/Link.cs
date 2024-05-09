@@ -8,6 +8,7 @@ namespace SupernoteSharp.Entities
         public Dictionary<string, object> Metadata { get; private set; }
         public byte[] Content { get; set; }
         public int PageNumber { get; set; }
+        public int TargetPageNumber { get; set; }
         public int Position { get; private set; }
         public int Type { get; private set; }
         public int InOut { get; private set; }
@@ -23,6 +24,7 @@ namespace SupernoteSharp.Entities
             Metadata = metadata;
             Content = null;
             PageNumber = 0;
+            TargetPageNumber = 0;
             Position = Int32.Parse(((string)metadata["LINKRECT"]).Split(',')[1]); // get top value from "left,top,width,height"
             Type = Int32.Parse((string)metadata["LINKTYPE"]);
             InOut = Int32.Parse((string)metadata["LINKINOUT"]);

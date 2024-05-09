@@ -18,7 +18,7 @@ header
 	"FILE_RECOGN_LANGUAGE"
     "PDFSTYLE" - "none" means no PDF template is used
     "PDFSTYLEMD5" - 0 means no PDF template is used
-    "STYLEUSAGETYPE" - 0 means normal style (IMAGE), 2 is PDF template as style (PDF)
+    "STYLEUSAGETYPE" - 0 means default style (NO TEMPLATE), 1 means normal (IMAGE TEMPLATE), 2 is PDF template as style (PDF)
 footer
 	"PAGEXXXX" [..] - max pages 9999
 	"TITLE_XXXX" [..]
@@ -26,7 +26,7 @@ footer
 	"COVER_X" - COVER_1 means there is cover, COVER_0 means no cover
 	"DIRTY"
 	"LINKO_XXXX" [..] - outbound links
-	"LINKI_XXXX" [..] - inbound links
+	"LINKI_XXXX" [..] - inbound links (obsolete after Chauvet 2.10.25 firmware update)
 	"FILE_FEATURE"
     "PDFSTYLELIST"
 	"STYLE_XXXX" [..]
