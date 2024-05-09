@@ -17,12 +17,14 @@ namespace SupernoteSharp.Entities
         public string FilePath { get; private set; }
         public string FileId { get; private set; }
         public string PageId { get; private set; }
+        public int TargetPageNumber { get; set; }
 
         public Link(Dictionary<string, object> metadata)
         {
             Metadata = metadata;
             Content = null;
             PageNumber = 0;
+            TargetPageNumber = 0;
             Position = Int32.Parse(((string)metadata["LINKRECT"]).Split(',')[1]); // get top value from "left,top,width,height"
             Type = Int32.Parse((string)metadata["LINKTYPE"]);
             InOut = Int32.Parse((string)metadata["LINKINOUT"]);

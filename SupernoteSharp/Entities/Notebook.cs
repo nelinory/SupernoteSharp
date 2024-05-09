@@ -54,6 +54,7 @@ namespace SupernoteSharp.Entities
             {
                 foreach (Dictionary<string, object> link in (List<Dictionary<string, object>>)metadata.Footer[Constants.KEY_LINKS])
                 {
+                    // TODO: Only add LINKINOUT = 0
                     Links.Add(new Link(link));
                 }
             }

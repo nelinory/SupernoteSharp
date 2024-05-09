@@ -169,17 +169,17 @@ namespace SupernoteSharpUnitTests
             notebook.FileType.Should().Be("MARK");
             notebook.Signature.Should().BeEquivalentTo("markSN_FILE_VER_20220013");
             notebook.Cover.Content.Should().BeNull();
-            notebook.TotalPages.Should().Be(2); // test mark have 2 pages
-            notebook.Pages.Count.Should().Be(2); // test mark have 2 pages
-            notebook.Pages[0].LayerOrder.Count.Should().Be(1); // test mark page 0 have total of 1 layers
+            notebook.TotalPages.Should().Be(2); // test note have 2 pages
+            notebook.Pages.Count.Should().Be(2); // test note have 2 pages
+            notebook.Pages[0].LayerOrder.Count.Should().Be(1); // test note page 0 have total of 1 layers
             notebook.Pages[0].LayerOrder[0].Should().Be("MAINLAYER");
             notebook.Pages[0].Protocol.Should().Be("RATTA_RLE");
-            notebook.Pages[0].Style.Should().StartWith("none"); // test mark page have no custom templates
+            notebook.Pages[0].Style.Should().StartWith("none"); // test note page have no custom templates
             notebook.PdfStyle.Should().Be("none");
             notebook.PdfStyleMd5.Should().Be("0");
             notebook.StyleUsageType.Should().Be(StyleUsageType.Default);
             notebook.FileId.Should().Be("F20230615115246511903rxKCoF4YD7zG");
-            notebook.IsRealtimeRecognition.Should().BeFalse(); // test mark does not have realtime recognition enabled
+            notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
 
         [TestMethod]
@@ -194,8 +194,8 @@ namespace SupernoteSharpUnitTests
             notebook.Cover.Content.Should().BeNull();
             notebook.Links.Count.Should().Be(0);
             notebook.TemplateLinks.Count.Should().Be(7); // test note pdf template have 7 links: 6 internal and 1 external
-            notebook.TotalPages.Should().Be(3); // test mark have 3 pages
-            notebook.Pages.Count.Should().Be(3); // test mark have 3 pages
+            notebook.TotalPages.Should().Be(3); // test note have 3 pages
+            notebook.Pages.Count.Should().Be(3); // test note have 3 pages
             notebook.PdfStyle.Should().Be("user_pdf_Pdf_Template_3");
             notebook.PdfStyleMd5.Should().Be("eddc1d3fb9837d1b8812ef3eb77dc5e1_9954");
             notebook.StyleUsageType.Should().Be(StyleUsageType.Pdf);
@@ -223,8 +223,8 @@ namespace SupernoteSharpUnitTests
             notebook.Cover.Content.Should().BeNull();
             notebook.Links.Count.Should().Be(3);
             notebook.TemplateLinks.Count.Should().Be(0);
-            notebook.TotalPages.Should().Be(3); // test mark have 3 pages
-            notebook.Pages.Count.Should().Be(3); // test mark have 3 pages
+            notebook.TotalPages.Should().Be(3); // test note have 3 pages
+            notebook.Pages.Count.Should().Be(3); // test note have 3 pages
             notebook.PdfStyle.Should().Be("none");
             notebook.PdfStyleMd5.Should().Be("0");
             notebook.StyleUsageType.Should().Be(StyleUsageType.Image);

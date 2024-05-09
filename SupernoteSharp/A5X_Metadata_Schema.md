@@ -26,7 +26,7 @@ footer
 	"COVER_X" - COVER_1 means there is cover, COVER_0 means no cover
 	"DIRTY"
 	"LINKO_XXXX" [..] - outbound links
-	"LINKI_XXXX" [..] - inbound links
+	"LINKI_XXXX" [..] - inbound links (obsolete after Chauvet 2.10.25 firmware update)
 	"FILE_FEATURE"
     "PDFSTYLELIST"
 	"STYLE_XXXX" [..]

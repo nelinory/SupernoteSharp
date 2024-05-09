@@ -78,6 +78,7 @@ namespace SupernoteSharp.Business
                 int linkAddress = Int32.Parse((string)notebook.Links[i].Metadata["LINKBITMAP"]);
                 notebook.Links[i].Content = GetContentAtAddress(fileStream, linkAddress);
                 notebook.Links[i].PageNumber = linkPageNumbers[i] - 1;  // link indexes are not 0 based
+                notebook.Links[i].TargetPageNumber = metadata.Pages.FindIndex(p => p.ContainsValue(notebook.Links[i].PageId)); // find target page index by using link.pageID
             }
 
             // attach page data
