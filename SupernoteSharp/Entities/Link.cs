@@ -8,6 +8,7 @@ namespace SupernoteSharp.Entities
         public Dictionary<string, object> Metadata { get; private set; }
         public byte[] Content { get; set; }
         public int PageNumber { get; set; }
+        public int TargetPageNumber { get; set; }
         public int Position { get; private set; }
         public int Type { get; private set; }
         public int InOut { get; private set; }
@@ -17,7 +18,6 @@ namespace SupernoteSharp.Entities
         public string FilePath { get; private set; }
         public string FileId { get; private set; }
         public string PageId { get; private set; }
-        public int TargetPageNumber { get; set; }
 
         public Link(Dictionary<string, object> metadata)
         {

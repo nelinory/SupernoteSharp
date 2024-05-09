@@ -78,7 +78,7 @@ namespace SupernoteSharpUnitTests
             notebook.Cover.Content.Should().NotBeNull();
             notebook.Titles.Count.Should().Be(2); // test note have 2 titles
             notebook.Keywords.Count.Should().Be(2); // test note have 2 keywords
-            notebook.Links.Count.Should().Be(7); // test note have 7 links: 6 internal + 1 external
+            notebook.Links.Count.Should().Be(4); // test note have 4 links: 3 internal + 1 external
             notebook.TotalPages.Should().Be(4); // test note have 4 pages
             notebook.Pages.Count.Should().Be(4); // test note have 4 pages
             notebook.Pages[2].LayerOrder.Count.Should().Be(5); // test note page 3 have total of 5 layers
@@ -105,7 +105,7 @@ namespace SupernoteSharpUnitTests
             notebook.Cover.Content.Should().BeNull();
             notebook.Titles.Count.Should().Be(0);
             notebook.Keywords.Count.Should().Be(0);
-            notebook.Links.Count.Should().Be(8); // test note have 8 links: 8 internal
+            notebook.Links.Count.Should().Be(4); // test note have 4 links: 4 internal
             notebook.TotalPages.Should().Be(2); // test note have 2 pages
             notebook.Pages.Count.Should().Be(2); // test note have 2 pages
             notebook.PdfStyle.Should().Be("none");
@@ -193,7 +193,7 @@ namespace SupernoteSharpUnitTests
             notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20220013");
             notebook.Cover.Content.Should().BeNull();
             notebook.Links.Count.Should().Be(0);
-            notebook.TemplateLinks.Count.Should().Be(7); // test note pdf template have 7 links: 6 internal and 1 external
+            notebook.TemplateLinks.Count.Should().Be(4); // test note pdf template have 4 links: 3 internal and 1 external
             notebook.TotalPages.Should().Be(3); // test note have 3 pages
             notebook.Pages.Count.Should().Be(3); // test note have 3 pages
             notebook.PdfStyle.Should().Be("user_pdf_Pdf_Template_3");

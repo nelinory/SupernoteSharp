@@ -280,9 +280,7 @@ namespace SupernoteSharpUnitTests
             PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
             byte[] allPages = converter.ConvertAll(vectorize: true, enableLinks: true);
 
-            File.WriteAllBytes("C:\\Temp\\A5X_TestNote_2.11.26.pdf", allPages);
-
-            //Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.pdf")), allPages).Should().BeTrue();
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.11.26.pdf")), allPages).Should().BeTrue();
         }
     }
 }

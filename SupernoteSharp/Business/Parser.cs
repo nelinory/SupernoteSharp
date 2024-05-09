@@ -127,7 +127,7 @@ namespace SupernoteSharp.Business
                 {
                     // each link properties are separated by a ',' character
                     string[] linkProperties = link.Split(",", StringSplitOptions.RemoveEmptyEntries);
-                    notebook.TemplateLinks.AddRange(GetTemplateLink(linkProperties, notebook.FileId));
+                    notebook.TemplateLinks.Add(GetTemplateLink(linkProperties, notebook.FileId));
                 }
             }
 
@@ -199,10 +199,8 @@ namespace SupernoteSharp.Business
             return bitmapAddresses;
         }
 
-        private List<Link> GetTemplateLink(string[] templateLink, string fileId)
+        private Link GetTemplateLink(string[] templateLink, string fileId)
         {
-            List<Link> templateLinks = new List<Link>();
-
             Dictionary<string, object> metadata = new Dictionary<string, object>
             {
                 ["LINKRECT"] = $"{Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[3]))}," +
@@ -220,25 +218,11 @@ namespace SupernoteSharp.Business
 
             Link linkOut = new Link(metadata)
             {
-                PageNumber = Int32.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[0]))) - 1 // link indexes are not 0 based
+                PageNumber = Int32.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[0]))) - 1, // link indexes are not 0 based
+                TargetPageNumber = Int32.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[2]))) - 1 // link indexes are not 0 based
             };
 
-            templateLinks.Add(linkOut);
-
-            // in case we are building template page links, we need to ensure we have both IN and OUT links
-            // they are the same structure, with the exception of the LINKINOUT attribute
-            if (linkOut.Type == (Int32)LinkType.Page)
-            {
-                metadata["LINKINOUT"] = ((Int32)LinkDirection.In).ToString();
-                Link linkIn = new Link(metadata)
-                {
-                    PageNumber = Int32.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(templateLink[2]))) - 1 // link indexes are not 0 based
-                };
-
-                templateLinks.Add(linkIn);
-            }
-
-            return templateLinks;
+            return linkOut;
         }
     }
 }

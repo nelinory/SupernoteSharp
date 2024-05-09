@@ -389,16 +389,13 @@ namespace SupernoteSharp.Business
                         bool isInternalLink = (sourceLink.FileId == _notebook.FileId);
                         if (isInternalLink == true)
                         {
-                            // each internal link is a pair of outbound and inbound, they have the same timestamp and rect coordinates
-                            Link targetLink = noteLinks.Where(x => x.InOut == (int)LinkDirection.In && x.Timestamp == sourceLink.Timestamp && x.Rect.Equals(sourceLink.Rect)).FirstOrDefault();
-
                             string sourceLinkTag = $"SourceLink_{sourceLink.Bitmap}";
-                            string targetLinkTag = $"TargetLink_{targetLink.Bitmap}";
+                            string targetLinkTag = $"TargetLink_{sourceLink.Bitmap}";
 
                             pdfPages[sourceLink.PageNumber].Graphics.StrokeRectangle(sourceLink.Rect.left, sourceLink.Rect.top, sourceLink.Rect.width, sourceLink.Rect.height,
                                                                                                 Colour.FromRgba(0, 0, 0, 0), tag: sourceLinkTag);
 
-                            pdfPages[targetLink.PageNumber].Graphics.StrokeRectangle(targetLink.Rect.left, 0, targetLink.Rect.width, targetLink.Rect.height,
+                            pdfPages[sourceLink.TargetPageNumber].Graphics.StrokeRectangle(sourceLink.Rect.left, 0, sourceLink.Rect.width, sourceLink.Rect.height,
                                                                                                 Colour.FromRgba(0, 0, 0, 0), tag: targetLinkTag);
 
                             links.Add(sourceLinkTag, $"#{targetLinkTag}");

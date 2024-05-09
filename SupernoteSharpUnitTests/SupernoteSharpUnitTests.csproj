@@ -85,6 +85,9 @@
     <None Update="TestData\A5X_TestNote_2.11.26.note">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\A5X_TestNote_2.11.26.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\A5X_TestNote_2.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
