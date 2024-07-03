@@ -11,14 +11,16 @@ namespace SupernoteSharp.Business
         public int Gray { get; private set; }
         public int White { get; private set; }
         public int Transparent { get; private set; }
+        public int DarkGray_Compatible { get; private set; }
+        public int Gray_Compatible { get; private set; }
 
         public ColorPalette(string mode = Constants.MODE_GRAYSCALE, int[] colors = null)
         {
             if (mode != Constants.MODE_GRAYSCALE && mode != Constants.MODE_RGB)
                 throw new ArgumentException("mode must be MODE_GRAYSCALE or MODE_RGB");
 
-            if (colors == null || colors.Length != 4)
-                throw new ArgumentException("colors must have 4 color values (black, darkgray, gray, white)");
+            if (colors == null || colors.Length != 6)
+                throw new ArgumentException("colors must have 6 color values (black, darkgray, gray, white, darkgray_compatible, gray_compatible)");
 
             Mode = mode;
             Black = colors[0];
@@ -26,16 +28,30 @@ namespace SupernoteSharp.Business
             Gray = colors[2];
             White = colors[3];
             Transparent = (mode == Constants.MODE_GRAYSCALE) ? Constants.GRAYSCALE_TRANSPARENT : Constants.RGB_TRANSPARENT;
+            DarkGray_Compatible = colors[4];
+            Gray_Compatible = colors[5];
         }
     }
 
     public static class DefaultColorPalette
     {
         public static ColorPalette Grayscale { get; }
-            = new ColorPalette(Constants.MODE_GRAYSCALE, new int[] { Constants.GRAYSCALE_BLACK, Constants.GRAYSCALE_DARK_GRAY, Constants.GRAYSCALE_GRAY, Constants.GRAYSCALE_WHITE });
+            = new ColorPalette(Constants.MODE_GRAYSCALE, new int[] {
+                Constants.GRAYSCALE_BLACK,
+                Constants.GRAYSCALE_DARK_GRAY,
+                Constants.GRAYSCALE_GRAY,
+                Constants.GRAYSCALE_WHITE,
+                Constants.GRAYSCALE_DARK_GRAY_COMPATIBLE,
+                Constants.GRAYSCALE_GRAY_COMPATIBLE});
 
         public static ColorPalette Rgb { get; }
-            = new ColorPalette(Constants.MODE_RGB, new int[] { Constants.RGB_BLACK, Constants.RGB_DARK_GRAY, Constants.RGB_GRAY, Constants.RGB_WHITE });
+            = new ColorPalette(Constants.MODE_RGB, new int[] {
+                Constants.RGB_BLACK,
+                Constants.RGB_DARK_GRAY,
+                Constants.RGB_GRAY,
+                Constants.RGB_WHITE,
+                Constants.RGB_RGB_DARK_GRAY_COMPATIBLE,
+                Constants.RGB_RGB_GRAY_COMPATIBLE});
     }
 
     internal static class ColorUtilities

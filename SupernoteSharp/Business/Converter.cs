@@ -24,12 +24,19 @@ namespace SupernoteSharp.Business
             private const uint SPECIAL_WHITE_STYLE_BLOCK_SIZE = 0x140e;
 
             private Notebook _notebook;
+            private bool _isNotebookX2;
             private ColorPalette _palette;
 
             public ImageConverter(Notebook notebook, ColorPalette palette)
             {
                 _notebook = notebook;
                 _palette = palette ?? DefaultColorPalette.Grayscale;
+
+                // check if notebook is X2 format
+                if (Int32.TryParse(_notebook.Signature.AsSpan(_notebook.Signature.Length - 8), out int firmwareVersion) == true)
+                    _isNotebookX2 = (firmwareVersion >= 20230015);
+                else
+                    _isNotebookX2 = false;
             }
 
             public Image Convert(int pageNumber, Dictionary<string, VisibilityOverlay> visibilityOverlay)
@@ -152,7 +159,10 @@ namespace SupernoteSharp.Business
                     case "SN_ASA_COMPRESS":
                         return new Decoder.FlateDecoder();
                     case "RATTA_RLE":
-                        return new Decoder.RattaRleDecoder();
+                        if (_isNotebookX2 == true)
+                            return new Decoder.RattaRleX2Decoder();
+                        else
+                            return new Decoder.RattaRleDecoder();
                     default:
                         throw new UnknownDecodeProtocolException($"unknown decode protocol: {protocol}");
                 }

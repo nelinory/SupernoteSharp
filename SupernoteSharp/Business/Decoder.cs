@@ -104,14 +104,14 @@ namespace SupernoteSharp.Business
         internal class RattaRleDecoder : IBaseDecoder
         {
             // Decoder for RATTA_RLE protocol.
-            private const byte COLORCODE_BLACK = 0x61;
-            private const byte COLORCODE_BACKGROUND = 0x62;
-            private const byte COLORCODE_DARK_GRAY = 0x63;
-            private const byte COLORCODE_GRAY = 0x64;
-            private const byte COLORCODE_WHITE = 0x65;
-            private const byte COLORCODE_MARKER_BLACK = 0x66;
-            private const byte COLORCODE_MARKER_DARK_GRAY = 0x67;
-            private const byte COLORCODE_MARKER_GRAY = 0x68;
+            internal const byte COLORCODE_BLACK = 0x61;
+            internal const byte COLORCODE_BACKGROUND = 0x62;
+            internal const byte COLORCODE_DARK_GRAY = 0x63;
+            internal const byte COLORCODE_GRAY = 0x64;
+            internal const byte COLORCODE_WHITE = 0x65;
+            internal const byte COLORCODE_MARKER_BLACK = 0x66;
+            internal const byte COLORCODE_MARKER_DARK_GRAY = 0x67;
+            internal const byte COLORCODE_MARKER_GRAY = 0x68;
 
             private const byte SPECIAL_LENGTH_MARKER = 0xff;
             private const int SPECIAL_LENGTH = 0x4000;
@@ -124,17 +124,7 @@ namespace SupernoteSharp.Business
 
                 int bitsPerPixel = (palette.Mode == Constants.MODE_RGB) ? 24 : 8;
 
-                Dictionary<byte, int> colormap = new Dictionary<byte, int>()
-                {
-                    { COLORCODE_BLACK, palette.Black },
-                    { COLORCODE_BACKGROUND, palette.Transparent },
-                    { COLORCODE_DARK_GRAY, palette.DarkGray },
-                    { COLORCODE_GRAY, palette.Gray },
-                    { COLORCODE_WHITE, palette.White },
-                    { COLORCODE_MARKER_BLACK, palette.Black },
-                    { COLORCODE_MARKER_DARK_GRAY, palette.DarkGray },
-                    { COLORCODE_MARKER_GRAY, palette.Gray }
-                };
+                Dictionary<byte, int> colormap = CreateColormap(palette);
 
                 int expectedLength = Constants.PAGE_HEIGHT * Constants.PAGE_WIDTH * (bitsPerPixel / 8);
 
@@ -152,7 +142,7 @@ namespace SupernoteSharp.Business
                         int length = bin.Current;
                         bool dataPushed = false;
 
-                        if (holder.Item2 > 0)
+                        if (holder.length > 0)
                         {
                             (byte prevColorcode, int prevLength) = holder;
                             holder = (0, 0);
@@ -218,7 +208,22 @@ namespace SupernoteSharp.Business
                 return (uncompressed.ToArray(), (Constants.PAGE_WIDTH, Constants.PAGE_HEIGHT), bitsPerPixel);
             }
 
-            private byte[] CreateColorByteArray(string mode, Dictionary<byte, int> colormap, byte colorCode, int length)
+            internal virtual Dictionary<byte, int> CreateColormap(ColorPalette palette)
+            {
+                return new Dictionary<byte, int>()
+                {
+                    { COLORCODE_BLACK, palette.Black },
+                    { COLORCODE_BACKGROUND, palette.Transparent },
+                    { COLORCODE_DARK_GRAY, palette.DarkGray },
+                    { COLORCODE_GRAY, palette.Gray },
+                    { COLORCODE_WHITE, palette.White },
+                    { COLORCODE_MARKER_BLACK, palette.Black },
+                    { COLORCODE_MARKER_DARK_GRAY, palette.DarkGray },
+                    { COLORCODE_MARKER_GRAY, palette.Gray }
+                };
+            }
+
+            internal virtual byte[] CreateColorByteArray(string mode, Dictionary<byte, int> colormap, byte colorCode, int length)
             {
                 if (mode == Constants.MODE_RGB)
                 {
@@ -246,6 +251,64 @@ namespace SupernoteSharp.Business
                 }
 
                 return 0;
+            }
+        }
+
+        internal class RattaRleX2Decoder : RattaRleDecoder
+        {
+            // Decoder for RATTA_RLE protocol of X2-series.
+
+            // 4 color codes were changed from X-series
+            internal new const byte COLORCODE_DARK_GRAY = 0x9D;
+            internal new const byte COLORCODE_GRAY = 0xC9;
+            internal new const byte COLORCODE_MARKER_DARK_GRAY = 0x9E;
+            internal new const byte COLORCODE_MARKER_GRAY = 0xCA;
+
+            // color codes for X-series compatibility
+            private const byte COLORCODE_DARK_GRAY_COMPATIBLE = 0x63;
+            private const byte COLORCODE_GRAY_COMPATIBLE = 0x64;
+
+            internal override Dictionary<byte, int> CreateColormap(ColorPalette palette)
+            {
+                return new Dictionary<byte, int>()
+                {
+                    { COLORCODE_BLACK, palette.Black },
+                    { COLORCODE_BACKGROUND, palette.Transparent },
+                    { COLORCODE_DARK_GRAY, palette.DarkGray },
+                    { COLORCODE_GRAY, palette.Gray },
+                    { COLORCODE_WHITE, palette.White },
+                    { COLORCODE_MARKER_BLACK, palette.Black },
+                    { COLORCODE_MARKER_DARK_GRAY, palette.DarkGray },
+                    { COLORCODE_MARKER_GRAY, palette.Gray },
+                    { COLORCODE_DARK_GRAY_COMPATIBLE, palette.DarkGray_Compatible },
+                    { COLORCODE_GRAY_COMPATIBLE, palette.Gray_Compatible }
+                };
+            }
+
+            internal override byte[] CreateColorByteArray(string mode, Dictionary<byte, int> colormap, byte colorCode, int length)
+            {
+                if (mode == Constants.MODE_RGB)
+                {
+                    byte r;
+                    byte g;
+                    byte b;
+                    if (colormap.ContainsKey(colorCode) == true)
+                        (r, g, b) = ColorUtilities.GetRgb(colormap[colorCode]);
+                    else
+                        (r, g, b) = (colorCode, colorCode, colorCode);
+
+                    return Enumerable.Repeat(new byte[] { r, g, b }, length).SelectMany(x => x).ToArray();
+                }
+                else
+                {
+                    byte c;
+                    if (colormap.ContainsKey(colorCode) == true)
+                        c = (byte)colormap[colorCode];
+                    else
+                        c = colorCode;
+
+                    return Enumerable.Repeat(c, length).ToArray();
+                }
             }
         }
 

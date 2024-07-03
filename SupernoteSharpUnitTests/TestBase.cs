@@ -13,6 +13,7 @@ namespace SupernoteSharpUnitTests
         internal static FileStream _A5X_TestNote_Pdf_Mark;
         internal static FileStream _A5X_TestNote_With_Pdf_Template;
         internal static FileStream _A5X_TestNote_2_11_26;
+        internal static FileStream _A5X_TestNote_2_15_29;
         internal static string _testDataLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData");
 
         [TestInitialize]
@@ -25,6 +26,7 @@ namespace SupernoteSharpUnitTests
             _A5X_TestNote_Pdf_Mark = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote.pdf.mark"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_With_Pdf_Template = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_With_Pdf_Template.note"), FileMode.Open, FileAccess.Read);
             _A5X_TestNote_2_11_26 = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_2.11.26.note"), FileMode.Open, FileAccess.Read);
+            _A5X_TestNote_2_15_29 = new FileStream(Path.Combine(_testDataLocation, "A5X_TestNote_2.15.29.note"), FileMode.Open, FileAccess.Read);
         }
 
         [TestCleanup]
@@ -50,6 +52,9 @@ namespace SupernoteSharpUnitTests
 
             if (_A5X_TestNote_2_11_26 != null)
                 _A5X_TestNote_2_11_26.Close();
+
+            if (_A5X_TestNote_2_15_29 != null)
+                _A5X_TestNote_2_15_29.Close();
         }
     }
 }
