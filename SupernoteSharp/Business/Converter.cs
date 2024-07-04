@@ -23,13 +23,20 @@ namespace SupernoteSharp.Business
         {
             private const uint SPECIAL_WHITE_STYLE_BLOCK_SIZE = 0x140e;
 
-            private Notebook _notebook;
-            private ColorPalette _palette;
+            private readonly Notebook _notebook;
+            private readonly bool _isNotebookX2;
+            private readonly ColorPalette _palette;
 
             public ImageConverter(Notebook notebook, ColorPalette palette)
             {
                 _notebook = notebook;
                 _palette = palette ?? DefaultColorPalette.Grayscale;
+
+                // check if notebook is X2 format
+                if (Int32.TryParse(_notebook.Signature.AsSpan(_notebook.Signature.Length - 8), out int firmwareVersion) == true)
+                    _isNotebookX2 = (firmwareVersion >= 20230015);
+                else
+                    _isNotebookX2 = false;
             }
 
             public Image Convert(int pageNumber, Dictionary<string, VisibilityOverlay> visibilityOverlay)
@@ -39,7 +46,7 @@ namespace SupernoteSharp.Business
                 if (page.IsLayerSupported == true)
                     return ConvertLayeredPage(page, visibilityOverlay);
                 else
-                    return ConvertNonLayeredPage(page, visibilityOverlay);
+                    return ConvertNonLayeredPage(page);
             }
 
             public List<Image> ConvertAll(Dictionary<string, VisibilityOverlay> visibilityOverlay)
@@ -100,7 +107,7 @@ namespace SupernoteSharp.Business
                 return pages;
             }
 
-            private Image ConvertNonLayeredPage(Page page, Dictionary<string, VisibilityOverlay> visibilityOverlay)
+            private Image ConvertNonLayeredPage(Page page)
             {
                 // TODO: Need Supernote A5 test note
                 byte[] pageContent = page.Content;
@@ -152,7 +159,10 @@ namespace SupernoteSharp.Business
                     case "SN_ASA_COMPRESS":
                         return new Decoder.FlateDecoder();
                     case "RATTA_RLE":
-                        return new Decoder.RattaRleDecoder();
+                        if (_isNotebookX2 == true)
+                            return new Decoder.RattaRleX2Decoder();
+                        else
+                            return new Decoder.RattaRleDecoder();
                     default:
                         throw new UnknownDecodeProtocolException($"unknown decode protocol: {protocol}");
                 }
@@ -169,7 +179,7 @@ namespace SupernoteSharp.Business
                 return Image.LoadPixelData<L8>(decodedLayer.imageBytes, width, height);
             }
 
-            private Image FlattenLayers(Page page, Dictionary<string, Image> images, Dictionary<string, VisibilityOverlay> visibilityOverlay)
+            private static Image FlattenLayers(Page page, Dictionary<string, Image> images, Dictionary<string, VisibilityOverlay> visibilityOverlay)
             {
                 // flatten all layers if any
                 Image<Rgba32> flattenImage = new Image<Rgba32>(Constants.PAGE_WIDTH, Constants.PAGE_HEIGHT, Color.White);
@@ -206,7 +216,7 @@ namespace SupernoteSharp.Business
                 return flattenImage.CloneAs<L8>();
             }
 
-            private Dictionary<string, bool> GetLayerVisibility(Page page)
+            private static Dictionary<string, bool> GetLayerVisibility(Page page)
             {
                 Dictionary<string, bool> layerVisibility = new Dictionary<string, bool>();
                 string layerInfo = page.LayerInfo;
@@ -241,7 +251,7 @@ namespace SupernoteSharp.Business
                 return layerVisibility;
             }
 
-            private Image<Rgba32> FlattenImage(Image<Rgba32> foreground, Image<Rgba32> background)
+            private static Image<Rgba32> FlattenImage(Image<Rgba32> foreground, Image<Rgba32> background)
             {
                 // make all foreground white pixels transparent by setting the alpha channel to 0
                 foreground.ProcessPixelRows(accessor =>
@@ -272,8 +282,8 @@ namespace SupernoteSharp.Business
         {
             private const int ALL_PAGES = -1;
 
-            private Notebook _notebook;
-            private ColorPalette _palette;
+            private readonly Notebook _notebook;
+            private readonly ColorPalette _palette;
 
             public PdfConverter(Notebook notebook, ColorPalette palette)
             {
@@ -409,9 +419,9 @@ namespace SupernoteSharp.Business
 
         public class SvgConverter
         {
-            private Notebook _notebook;
-            private ColorPalette _palette;
-            private ImageConverter _imageConverter;
+            private readonly Notebook _notebook;
+            private readonly ColorPalette _palette;
+            private readonly ImageConverter _imageConverter;
 
             public SvgConverter(Notebook notebook, ColorPalette palette)
             {
@@ -563,13 +573,11 @@ namespace SupernoteSharp.Business
 
         public class TextConverter
         {
-            private Notebook _notebook;
-            private ColorPalette _palette;
+            private readonly Notebook _notebook;
 
-            public TextConverter(Notebook notebook, ColorPalette palette)
+            public TextConverter(Notebook notebook)
             {
                 _notebook = notebook;
-                _palette = palette ?? DefaultColorPalette.Grayscale;
             }
 
             public string Convert(int pageNumber)
@@ -582,8 +590,7 @@ namespace SupernoteSharp.Business
                     throw new ConverterException($"note recognition status = {page.RecognStatus}, expected = {Constants.RECOGNSTATUS_DONE}");
 
                 byte[] recognBytes = page.RecognText;
-                Decoder.TxtDecoder decoder = new Decoder.TxtDecoder();
-                List<string> recognText = decoder.Decode(recognBytes, _palette);
+                List<string> recognText = Decoder.TxtDecoder.Decode(recognBytes);
 
                 return String.Join(" ", recognText);
             }

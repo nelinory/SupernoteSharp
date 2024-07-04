@@ -36,6 +36,8 @@
         internal const byte GRAYSCALE_GRAY = 0xc9;
         internal const byte GRAYSCALE_WHITE = 0xfe;
         internal const byte GRAYSCALE_TRANSPARENT = 0xff;
+        internal const byte GRAYSCALE_DARK_GRAY_COMPATIBLE = 0x30;
+        internal const byte GRAYSCALE_GRAY_COMPATIBLE = 0x50;
 
         // preset RGB colors
         internal const int RGB_BLACK = 0x000000;
@@ -43,5 +45,7 @@
         internal const int RGB_GRAY = 0xc9c9c9;
         internal const int RGB_WHITE = 0xfefefe;
         internal const int RGB_TRANSPARENT = 0xffffff;
+        internal const int RGB_RGB_DARK_GRAY_COMPATIBLE = 0x303030;
+        internal const int RGB_RGB_GRAY_COMPATIBLE = 0x505050;
     }
 }

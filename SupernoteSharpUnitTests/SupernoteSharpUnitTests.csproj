@@ -88,6 +88,15 @@
     <None Update="TestData\A5X_TestNote_2.11.26.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestData\A5X_TestNote_2.15.29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote_2.15.29.note">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\A5X_TestNote_2.15.29.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\A5X_TestNote_2.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
