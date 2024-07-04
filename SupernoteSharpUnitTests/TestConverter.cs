@@ -260,7 +260,7 @@ namespace SupernoteSharpUnitTests
             Parser parser = new Parser();
             Notebook notebook = parser.LoadNotebook(_A5X_TestNote_Realtime, Policy.Strict);
 
-            TextConverter converter = new TextConverter(notebook, DefaultColorPalette.Grayscale);
+            TextConverter converter = new TextConverter(notebook);
             string page_0 = converter.Convert(0);
             string page_1 = converter.Convert(1);
 

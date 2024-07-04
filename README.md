@@ -12,8 +12,8 @@ SupernoteSharp is an unofficial library for Supernote paper-like tablet by Ratta
 This project is heavily inspired by https://github.com/jya-dev/supernote-tool.
 
 ### Supported file formats
-- `*.note` file created on Supernote A5X/A6X (firmware Chauvet 2.11.26)
-- `*.mark` pdf annotations created on Supernote A5X/A6X (firmware Chauvet 2.11.26)
+- `*.note` file created on Supernote A5X/A6X (firmware Chauvet 2.15.29)
+- `*.mark` pdf annotations created on Supernote A5X/A6X (firmware Chauvet 2.15.29)
 
 ### Key Features - A5X/A6X models only
 - Export `*.note`/`*.mark` file structure (metadata)

@@ -239,7 +239,7 @@ namespace SupernoteSharp.Business
                 }
             }
 
-            private int AdjustTailLength(int tailLength, int currentLength, int totalLength)
+            private static int AdjustTailLength(int tailLength, int currentLength, int totalLength)
             {
                 int gap = totalLength - currentLength;
 
@@ -331,7 +331,7 @@ namespace SupernoteSharp.Business
 
         internal class TxtDecoder
         {
-            public List<string> Decode(byte[] data, ColorPalette palette, bool allBlank = false)
+            public static List<string> Decode(byte[] data)
             {
                 List<string> noteText = new List<string>();
 
