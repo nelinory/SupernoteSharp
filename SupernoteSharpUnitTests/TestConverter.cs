@@ -294,5 +294,17 @@ namespace SupernoteSharpUnitTests
 
             Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.15.29.pdf")), page_0).Should().BeTrue();
         }
+
+        [TestMethod]
+        public void TestPdfConvert_Note_2_21_32()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_2_21_32, Policy.Strict);
+
+            PdfConverter converter = new PdfConverter(notebook, DefaultColorPalette.Grayscale);
+            byte[] allPages = converter.ConvertAll(vectorize: true, enableLinks: true);
+            
+            Utilities.ByteArraysEqual(File.ReadAllBytes(Path.Combine(_testDataLocation, "A5X_TestNote_2.21.32.pdf")), allPages).Should().BeTrue();
+        }
     }
 }

@@ -71,6 +71,13 @@ namespace SupernoteSharpUnitTests
             expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
 
             actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
+
+            // generate metadata from a note test file for 2_21_32 firmware
+            actual = parser.ParseMetadata(_A5X_TestNote_2_21_32, Policy.Strict);
+            expectedContent = File.ReadAllText(Path.Combine(_testDataLocation, "A5X_TestNote_2.21.32.json"));
+            expected = JsonSerializer.Deserialize<Metadata>(expectedContent);
+
+            actual.ToJson().Should().BeEquivalentTo(expected.ToJson());
         }
 
         [TestMethod]
@@ -258,6 +265,29 @@ namespace SupernoteSharpUnitTests
             notebook.PdfStyleMd5.Should().Be("0");
             notebook.StyleUsageType.Should().Be(StyleUsageType.Default);
             notebook.FileId.Should().Be("F20230617090423828272YLyqIslswPlI");
+            notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
+        }
+
+        [TestMethod]
+        public void TestLoadNotebook_2_21_32()
+        {
+            Parser parser = new Parser();
+            Notebook notebook = parser.LoadNotebook(_A5X_TestNote_2_21_32, Policy.Strict);
+
+            notebook.Metadata.Should().NotBeNull();
+            notebook.FileType.Should().Be("NOTE");
+            notebook.Signature.Should().BeEquivalentTo("noteSN_FILE_VER_20230015");
+            notebook.Cover.Content.Should().BeNull();
+            notebook.Titles.Count.Should().Be(1); // test note have one heading
+            notebook.Keywords.Count.Should().Be(1); // test note have one keyword
+            notebook.Links.Count.Should().Be(3);
+            notebook.TemplateLinks.Count.Should().Be(0);
+            notebook.TotalPages.Should().Be(3); // test note have 3 pages
+            notebook.Pages.Count.Should().Be(3); // test note have 3 pages
+            notebook.PdfStyle.Should().Be("none");
+            notebook.PdfStyleMd5.Should().Be("0");
+            notebook.StyleUsageType.Should().Be(StyleUsageType.Image);
+            notebook.FileId.Should().Be("F20240221111319916429VSQ21RFBB6aU");
             notebook.IsRealtimeRecognition.Should().BeFalse(); // test note does not have realtime recognition enabled
         }
     }
